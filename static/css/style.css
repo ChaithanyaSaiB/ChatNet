@@ -1,0 +1,388 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    overflow: hidden; /* Prevent full-page scrolling */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 15% 55% 30%;
+    grid-template-rows: 9% 91%;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* Main Menu (Grid 1 & 4) */
+.main-menu {
+    grid-row: span 2;
+    background-color: #dfe6e9; /* Light Muted Gray */
+    color: #2d3436; /* Dark Gray Text */
+    padding: 10px;
+}
+
+/* ChatNet Title - Centered, Professional & Fancy */
+.chatnet-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding-bottom: 45px; /* Space between title and "New Net" */
+    color: #2d3436; /* Dark Gray */
+}
+
+/* ðŸŒŸ 1. New Net Button - Better Colors & Consistent Rounded Edges */
+.new-net-button {
+    display: inline-block;
+    text-decoration: none;
+    background-color: #74b9ff; /* Light Blue */
+    font-size: 16px;
+    color: white;
+    padding: 10px 14px;
+    border: 2px solid rgba(52, 152, 219, 0.8); /* Muted Dark Blue */
+    border-radius: 20px; /* Ensure rounded corners remain */
+    text-align: center;
+    margin-bottom: 45px;
+    transition: all 0.3s ease;
+}
+
+.new-net-button:hover {
+    background-color: #55efc4; /* Muted Green */
+    color: white;
+    border-color: rgba(46, 204, 113, 0.8); /* Soft Green Border */
+    border-radius: 20px; /* Ensure rounded corners remain */
+}
+
+/* MENU ITEMS - Spaced Out */
+.menu-item {
+    display: block;
+    text-decoration: none;
+    color: #2d3436;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 12px 15px;
+    margin-bottom: 10px; /* Add spacing */
+    border-radius: 5px;
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+/* Thread Items */
+.thread-item {
+    display: block;
+    text-decoration: none;
+    font-size: 12px;
+    color: #2d3436;
+    padding: 6px 10px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Prevent text wrapping and hide overflow in Main Menu */
+.menu-item, .thread-item {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    width: 100%;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* Main Menu Links - Black Text & Hover Effect */
+.menu-item, .new-net-button, .thread-item {
+    display: block;
+    text-decoration: none;
+    color: #2d3436; /* Dark Gray Text */
+    font-weight: 500;
+    padding: 10px 12px;
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+/* Subtle Hover Effect */
+.menu-item:hover, .thread-item:hover {
+    color: #000; /* White text for clarity */
+    background-color: rgba(189, 195, 199, 0.8); /* Slightly darker gray */
+}
+
+/* Indent Thread List (Subsection of Library) */
+.thread-list {
+    margin-left: 15px; /* Moves it slightly left */
+    list-style: none;
+}
+
+/* Login Bar (Now Covers Grid 2 & 3) */
+.login-bar {
+    grid-column: span 2;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    background-color: #ecf0f1;
+    padding-right: 20px;
+    border-bottom: 1px solid rgba(96, 93, 93, 0.2); /* 40% Opacity */
+}
+
+.login-button {
+    text-decoration: none;
+    background-color: #3498db;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* Chat Pane (Grid 5) */
+.chat-pane {
+    position: relative;
+    background-color: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* Chat Area - Restore Scrolling */
+#chat-area {
+    flex-grow: 1;
+    overflow-y: auto; /* Restore scrolling */
+    padding: 20px;
+    border-radius: 10px;
+    position: relative;
+    max-height: calc(100% - 60px);
+    border: 1px solid rgba(96, 93, 93, 0.3); /* 60% Opacity Border */
+    border-bottom: none; /* No border at the bottom */
+}
+
+/* Restore Scroll Behavior */
+#chat-area::-webkit-scrollbar {
+    width: 8px;
+}
+
+#chat-area::-webkit-scrollbar-thumb {
+    background: #b2bec3; /* Light Muted Scrollbar */
+    border-radius: 4px;
+}
+
+/* Spacing for elements inside Chat Area */
+.query, .sources, .response, .suggested-queries {
+    margin-bottom: 20px;
+}
+
+/* Query Styling */
+#query-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2c3e50; /* Dark Blue */
+}
+
+/* Sources Section */
+.sources-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #16a085; /* Teal */
+}
+
+.source-item {
+    display: block;
+    color: #2980b9; /* Blue */
+    text-decoration: none;
+    margin-top: 5px;
+}
+
+.source-item:hover {
+    text-decoration: underline;
+}
+
+/* Response Section */
+.response-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #e67e22; /* Orange */
+}
+
+#response-text {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+    text-align: justify;
+}
+
+/* Suggested Queries */
+.suggested-queries-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #8e44ad; /* Purple */
+}
+
+.suggested-query-item {
+    display: block;
+    color: #9b59b6; /* Light Purple */
+    text-decoration: none;
+    margin-top: 5px;
+}
+
+.suggested-query-item:hover {
+    text-decoration: underline;
+}
+
+/* ðŸŒŸ 4. Remove Scrollbar & Add Gradient Fade */
+.chat-area {
+    position: relative;
+    overflow-y: auto; /* Ensure scrolling is restored */
+}
+
+/* User Input Area */
+.user-input-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #ddd;
+    border-radius: 40px;
+    padding: 10px;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+}
+
+/* User Input Expands into Textarea */
+#user-input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 15px;
+    border: 1px solid #bbb;
+    min-height: 40px;
+    max-height: 120px;
+    resize: none;
+    overflow-y: auto;
+}
+
+/* Submit Button */
+#send-button {
+    padding: 8px 12px;
+    background-color: #27ae60;
+    color: white;
+    border: 1px solid #1e8449;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#send-button:hover {
+    background-color: #1e8449;
+    border-color: #27ae60;
+}
+
+/* Net Pane (Grid 6) */
+.net-pane {
+    background-color: #bdc3c7;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#tree-container {
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    justify-content: flex-start; /* Change from center to flex-start */
+    align-items: center;
+}
+
+
+  canvas {
+    display: block;
+    margin: auto;
+}
+  
+  .node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    justify-content: center;
+    padding-top: 20px;
+  }
+  
+  .value {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #3498db;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .children {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    padding-top: 20px;
+  }
+  
+  .node::before,
+  .node::after {
+    content: '';
+    position: absolute;
+    top: -10px; /* Moved up by 5px */
+    width: 2px;
+    height: 30px;
+    background-color: #3498db;
+    z-index: 1;
+  }
+  
+  .node::before {
+    left: 10px;
+    transform: rotate(45deg);
+    transform-origin: top left;
+  }
+  
+  .node::after {
+    right: 10px;
+    transform-origin: top right;
+    transform: rotate(-45deg);
+  }
+  
+  /* For single child connection */
+  .node:only-child::before {
+    /*left: 50%;*/
+    transform: none;
+    height: 30px;
+  }
+  
+  .node:only-child::after {
+    display: none;
+  }
+  
+  .node:first-child:not(:only-child)::after {
+    display: none;
+  }
+  
+  .node:last-child:not(:only-child)::before {
+    display: none;
+  }
+  
+  .root::before,
+  .root::after {
+    display: none;
+  }

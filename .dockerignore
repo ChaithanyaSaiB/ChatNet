@@ -1,0 +1,6 @@
+chatnetv2
+__pycache__
+
+*.chatnetv2
+*.chatnetv2.*
+chatnetv2.*
