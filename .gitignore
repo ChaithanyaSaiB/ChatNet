@@ -1,0 +1,8 @@
+# Adding environment variables file
+.env
+
+# Adding chatnetv2 virtual environment folder
+/chatnetv2
+
+# Adding pycache folders
+/__pycache__
