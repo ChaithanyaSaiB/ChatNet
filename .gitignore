@@ -1,6 +1,9 @@
 # Adding environment variables file
 .env
 
+# Adding Agents folder
+/Agents
+
 # Adding chatnetv2 virtual environment folder
 /chatnetv2
 
