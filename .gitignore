@@ -1,5 +1,5 @@
 # Adding environment variables file
-.env
+**/.env
 
 # Adding Agents folder
 /Agents
