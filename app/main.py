@@ -34,9 +34,10 @@ templates = Jinja2Templates(directory=templates_folder)
 
 app.include_router(chat.router)
 
-@app.get("/")
-def read_root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+@app.get("/continuechat/{thread_id}")
+def continue_chat(request: Request, thread_id: str):
+    thread_chat = get_thread_chat_history(thread_id)
+    return templates.TemplateResponse("index.html", {"request": request, "thread_chat": thread_chat})
 
 @app.get("/login")
 def login(request: Request):
@@ -46,6 +47,6 @@ def login(request: Request):
 def login(request: Request):
     return templates.TemplateResponse("signup.html", {"request": request})
 
-@app.get("/newchat")
+@app.get("/")
 def newchat(request: Request):
     return templates.TemplateResponse("new_chat.html", {"request": request})

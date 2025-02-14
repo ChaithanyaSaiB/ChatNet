@@ -6,3 +6,6 @@
 
 # Adding pycache folders
 /__pycache__
+
+# Adding anima folder
+/.anima
