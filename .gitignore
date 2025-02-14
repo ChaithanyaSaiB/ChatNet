@@ -4,8 +4,8 @@
 # Adding chatnetv2 virtual environment folder
 /chatnetv2
 
-# Adding pycache folders
-/__pycache__
+# Adding all pycache folders
+**/__pycache__
 
 # Adding anima folder
 /.anima
