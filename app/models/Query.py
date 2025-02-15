@@ -1,7 +1,7 @@
 from sqlalchemy import Column, BigInteger, String, Text, DateTime, func, ForeignKey
 from sqlalchemy.orm import relationship
 from app.core.database import Base
-from app.models.QueryRelation import QueryRelation
+from app.models.query_relation import QueryRelation
 
 class Query(Base):
     __tablename__ = "queries"
