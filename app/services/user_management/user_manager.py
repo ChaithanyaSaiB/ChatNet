@@ -8,18 +8,15 @@ class UserManager(BaseService):
     def __init__(self, db: Session):
         super().__init__(db)
 
-    def create_user(self, username: str, email: str, password: str) -> User:
+    def create_user(self, username: str, password: str) -> User:
         hashed_password = get_password_hash(password)
-        return self.create(User, username=username, email=email, password=hashed_password)
+        return self.create(User, username=username, password=hashed_password)
 
     def get_user_by_username(self, username: str) -> Optional[User]:
         return self.db.query(User).filter(User.username == username).first()
 
-    def get_user_by_email(self, email: str) -> Optional[User]:
-        return self.db.query(User).filter(User.email == email).first()
-
-    def authenticate_user(self, username_or_email: str, password: str) -> Optional[User]:
-        user = self.get_user_by_username(username_or_email) or self.get_user_by_email(username_or_email)
+    def authenticate_user(self, username: str, password: str) -> Optional[User]:
+        user = self.get_user_by_username(username)
         if not user:
             return None
         if not verify_password(password, user.password):

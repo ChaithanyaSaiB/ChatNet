@@ -4,9 +4,8 @@ from app.core.database import Base
 
 class User(Base):
     __tablename__ = "users"  # Changed to lowercase plural
-    user_id = Column(BigInteger, primary_key=True, index=True)  # Changed to snake_case
+    user_id = Column(BigInteger, primary_key=True, autoincrement=True, index=True)  # Changed to snake_case
     username = Column(String(50), unique=True, nullable=False, index=True)  # Added index
-    email = Column(String(120), unique=True, nullable=False, index=True)  # Added index
     password = Column(Text, nullable=False)
     timestamp = Column(DateTime, default=func.now())
 

@@ -31,12 +31,13 @@
         <!-- Login Bar (Grid 2 & 3) -->
         <div class="login-bar">
             <a href="login" class="login-button">Login</a>
-        </div>
+            <span class="username-display" style="display: none;"></span>
+            <button class="logout-button">Logout</button>
+        </div>        
 
         <!-- Chat Pane (Grid 5) - Modified -->
         <div class="chat-pane">
             <div class="user-input-container">
-                
                 <textarea id="user-input" placeholder="Type your query here"></textarea>
                 <button id="send-button">Send</button>
             </div>
@@ -52,5 +53,6 @@
 
     <script src="static/js/script.js"></script>
     <script src="static/js/chat_functions.js"></script>
+    <script src="static/js/new_chat.js"></script>
 </body>
 </html>

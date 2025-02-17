@@ -18,3 +18,7 @@ class ChatMessage(BaseModel):
 
 class ChatResponse(BaseModel):
     response: str
+
+class UserAccess(BaseModel):
+    username: str
+    password: str

@@ -140,6 +140,11 @@ body {
     border-radius: 5px;
 }
 
+.logout-button {
+    margin-left: 10px;
+    display: none;
+}
+
 /* Chat Pane (Grid 5) */
 .chat-pane {
     position: relative;
