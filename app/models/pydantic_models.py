@@ -22,3 +22,10 @@ class ChatResponse(BaseModel):
 class UserAccess(BaseModel):
     username: str
     password: str
+
+class ThreadCreation(BaseModel):
+    user_id: str
+    query: str
+
+class UserId(BaseModel):
+    user_id: int

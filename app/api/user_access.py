@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse, JSONResponse
 from sqlalchemy.orm import Session
 from app.models.pydantic_models import UserAccess
-from app.services.user_management.user_manager import UserManager
+from app.services.user_manager import UserManager
 from app.utils.dependency_injectors import get_user_manager
 
 router = APIRouter()

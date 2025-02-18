@@ -1,4 +1,4 @@
-from sqlalchemy import Column, BigInteger, String, Text, DateTime, func, ForeignKey
+from sqlalchemy import UUID, Column, BigInteger, String, Text, DateTime, func, ForeignKey
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 from app.models.query_relation import QueryRelation
@@ -6,7 +6,7 @@ from app.models.query_relation import QueryRelation
 class Query(Base):
     __tablename__ = "queries"
     query_id = Column(BigInteger, primary_key=True, index=True)
-    thread_id = Column(BigInteger, ForeignKey('threads.thread_id'), nullable=False, index=True)  # Changed to BigInteger
+    thread_id = Column(UUID(as_uuid=True), ForeignKey('threads.thread_id'), nullable=False, index=True)  # Changed to BigInteger
     user_id = Column(BigInteger, ForeignKey('users.user_id'), nullable=False, index=True)  # Changed to BigInteger
     query_text = Column(Text, nullable=False)
     timestamp = Column(DateTime, default=func.now())

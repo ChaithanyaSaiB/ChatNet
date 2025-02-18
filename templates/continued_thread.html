@@ -16,8 +16,9 @@
                 <a href="chat.html" class="menu-item">Home</a>
                 <a href="about.html" class="menu-item">Library</a>
                 <ul class="thread-list">
-                    <li><a href="#" class="thread-item">Lorem ipsum Praesent varius finibus erat, sit amet condimentum libero</a></li>
-                    <li><a href="#" class="thread-item">Mauris semper neque quis lacinia volutpat. Aenean vestibulum diam</a></li>
+                    {% for thread in last_5_threads %}
+                        <li><a href="/thread?thread_id={{ thread.thread_id }}" class="thread-item" data-thread-id="{{ thread.thread_id }}">{{ thread.title }}</a></li>
+                    {% endfor %}
                 </ul>
                 <div>
                     <input type="text" id="parentValues" placeholder="Parent nodes (comma separated)">
@@ -34,9 +35,11 @@
 
         <!-- Chat Pane (Grid 5) -->
         <div class="chat-pane">
+            <input type="hidden" name="thread_id" value="{{ thread_id }}">
             <div id="chat-area">
+                {% for conversation_unit in conversation_history %}
                 <div class="query">
-                    <h2 id="query-title"></h2>
+                    <h2 id="query-title">{{ conversation_unit["query_text"] }}</h2>
                 </div>
                 <div class="sources">
                     <h5 class="sources-title">Sources</h5>
@@ -45,13 +48,14 @@
                 </div>
                 <div class="response">
                     <h3 class="response-title">Answer</h3>
-                    <p id="response-text"></p>
+                    <p id="response-text">{{ conversation_unit["response"]["response_text"] }}</p>
                 </div>
                 <div class="suggested-queries">
                     <h5 class="suggested-queries-title">Suggested Queries</h5>
                     <a href="#" class="suggested-query-item"></a>
                     <a href="#" class="suggested-query-item"></a>
                 </div>
+                {% endfor %}
             </div>
             <div class="user-input-area">
                 <textarea id="user-input" placeholder="Type your query here"></textarea>
@@ -67,7 +71,7 @@
         </div>
     </div>
 
-    <script src="static/js/script.js"></script>
-    <script src="static/js/chat_functions.js"></script>
+    <script src="static/js/tree_script.js"></script>
+    <script src="static/js/new_thread.js"></script>
 </body>
 </html>
