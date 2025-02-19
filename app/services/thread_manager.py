@@ -15,7 +15,7 @@ class ThreadManager(BaseService):
             threads = (
                 self.db.query(Thread)
                 .filter(Thread.user_id == user_id)
-                .order_by(Thread.timestamp.desc())
+                .order_by(Thread.created_at.desc())
                 .limit(limit)
                 .offset(offset)
                 .all()

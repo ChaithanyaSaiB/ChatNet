@@ -1,14 +1,14 @@
-from sqlalchemy import Column, BigInteger, String, Text, DateTime, func, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, DateTime, func, ForeignKey
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
 class SearchResult(Base):
-    __tablename__ = "search_results"  # Changed to plural for consistency
-    search_result_id = Column(BigInteger, primary_key=True, index=True)
-    query_id = Column(BigInteger, ForeignKey('queries.query_id'), nullable=False, index=True)
-    url = Column(String(2083), index=True)  # Changed from BigInteger to String, removed incorrect ForeignKey
-    content = Column(Text)  # Changed from String to Text for potentially large content
-    timestamp = Column(DateTime, default=func.now())
+    __tablename__ = 'search_results'
 
-    # Add relationship
+    search_result_id = Column(Integer, primary_key=True)
+    query_id = Column(Integer, ForeignKey('queries.query_id'))
+    url = Column(String(2048), nullable=False)
+    content = Column(Text)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
     query = relationship("Query", back_populates="search_results")

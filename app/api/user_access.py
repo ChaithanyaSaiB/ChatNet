@@ -16,4 +16,3 @@ def logging_in_user(user: UserAccess, manager: UserManager = Depends(get_user_ma
 def signing_up_user(user: UserAccess, manager: UserManager = Depends(get_user_manager)):
     manager.create_user(username=user.username, password=user.password)
     return JSONResponse(content={"message": "User created successfully", "redirect": "/login"}, status_code=200)
-

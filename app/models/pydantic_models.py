@@ -10,9 +10,8 @@ class State(TypedDict):
 class ChatRequest(BaseModel):
     message: str
 
-# Pydantic models for request and response bodies
 class ChatMessage(BaseModel):
-    conversation_id: str
+    conversation_id: int  # Changed from str to int
     role: str  # "user" or "assistant"
     message: str
 
@@ -24,8 +23,14 @@ class UserAccess(BaseModel):
     password: str
 
 class ThreadCreation(BaseModel):
-    user_id: str
+    user_id: int  # Changed from str to int
     query: str
 
 class UserId(BaseModel):
+    user_id: int
+
+class ContinueThread(BaseModel):
+    thread_id: int  # Changed from str to int
+    query_id: int
+    query: str
     user_id: int

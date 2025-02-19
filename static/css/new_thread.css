@@ -23,7 +23,8 @@
     padding: 10px;
     border-radius: 15px;
     border: 1px solid #bbb;
-    min-height: 50px;
+    min-height: 40px;
+    max-height: 120px;
     resize: none;
     font-size: 16px;
 }

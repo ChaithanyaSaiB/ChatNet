@@ -1,58 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatNet</title>
-    <link rel="stylesheet" href="static/css/style.css">
-    <link rel="stylesheet" href="static/css/new_chat_style.css">
-</head>
-<body>
-    <div class="grid-container">
-        <!-- Main Menu (Grid 1 & 4) -->
-        <div class="main-menu">
-            <h3 class="chatnet-title">ChatNet</h3>
-            <div class="menu">
-                <a href="newchat" class="new-net-button">New Net</a>
-                <a href="chat.html" class="menu-item">Home</a>
-                <a href="about.html" class="menu-item">Library</a>
-                <ul class="thread-list">
-                    <li><a href="#" class="thread-item">Lorem ipsum Praesent varius finibus erat, sit amet condimentum libero</a></li>
-                    <li><a href="#" class="thread-item">Mauris semper neque quis lacinia volutpat. Aenean vestibulum diam</a></li>
-                </ul>
-                <div>
-                <input type="number" id="parentValue" placeholder="Parent Value">
-                <input type="number" id="newValue" placeholder="New Node Value">
-                <button onclick="addNode()">Add Node</button>
-                </div>
-            </div>
-        </div>
+{% extends "base.html" %}
 
-        <!-- Login Bar (Grid 2 & 3) -->
-        <div class="login-bar">
-            <a href="login" class="login-button">Login</a>
-            <span class="username-display" style="display: none;"></span>
-            <button class="logout-button">Logout</button>
-        </div>        
+{% block extra_css %}
+<link rel="stylesheet" href="static/css/new_thread.css">
+{% endblock %}
 
-        <!-- Chat Pane (Grid 5) - Modified -->
-        <div class="chat-pane">
-            <div class="user-input-container">
-                <textarea id="user-input" placeholder="Type your query here"></textarea>
-                <button id="send-button">Send</button>
-            </div>
-        </div>
+{% block chat_pane %}
+<div class="user-input-container">
+    <textarea id="user-input" placeholder="Type your query here"></textarea>
+    <button id="send-button">Send</button>
+</div>
+{% endblock %}
 
-        <!-- Net Pane (Grid 6) -->
-        <div class="net-pane">
-            <div id="tree-container">
-                <canvas id="treeCanvas"></canvas>
-            </div>
-        </div>
-    </div>
-
-
-    <script src="static/js/new_thread.js"></script>
-    <script src="static/js/tree_script.js"></script>
-</body>
-</html>
+{% block extra_js %}
+<script src="static/js/new_thread.js"></script>
+{% endblock %}

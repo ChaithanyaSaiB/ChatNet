@@ -277,9 +277,9 @@ function adjustCanvasSize() {
 // Call this function after adding nodes and on window resize
 window.addEventListener('resize', adjustCanvasSize);
 
-function addNode() {
-    const parentValue = document.getElementById('parentValue').value;
-    const newValue = document.getElementById('newValue').value;
+function addNode(parentValue, newValue) {
+    //const parentValue = document.getElementById('parentValue').value;
+    //const newValue = document.getElementById('newValue').value;
 
     if (!newValue) {
         alert("Please enter a valid node value.");

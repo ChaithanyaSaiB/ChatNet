@@ -15,7 +15,6 @@ from app.models.thread import Thread
 from app.models.search_result import SearchResult
 from app.models.query import Query
 from app.models.query_relation import QueryRelation
-from app.models.ai_response import AIResponse
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -42,6 +41,7 @@ app.mount("/static", StaticFiles(directory=static_folder), name="static")
 app.include_router(chat.router)
 app.include_router(user_access.router)
 app.include_router(thread_calls.router)
+
 
 @app.exception_handler(APIError)
 async def api_error_handler(request: Request, exc: APIError):
