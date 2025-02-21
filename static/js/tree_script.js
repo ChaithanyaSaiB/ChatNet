@@ -128,7 +128,7 @@ class Tree {
 const canvas = document.getElementById('treeCanvas');
 const ctx = canvas.getContext('2d');
 window.tree = new Tree();
-let selection = undefined;
+let selection = [];
 
 // Function to calculate positions level by level
 function calculateLevelPositions(root, levelHeight, nodeSpacing) {
@@ -156,7 +156,6 @@ function calculateLevelPositions(root, levelHeight, nodeSpacing) {
         nodes.forEach((node, index) => {
             node.x = startX + index * nodeSpacing;
             node.y = parseInt(level) * levelHeight + 50;  // Y position based on level
-            console.log("calculateLevelPositions: Node", node.value, "x:", node.x, "y:", node.y); //ADDED
             // Check for collisions and adjust position
             adjustPositionForCollisions(node);
         });
@@ -205,7 +204,7 @@ function drawNode(node, levelHeight, nodeSpacing) {
     // Draw node circle
     ctx.beginPath();
     ctx.arc(node.x, node.y, node.radius, 0, 2 * Math.PI);
-    ctx.fillStyle = node.selected ? '#FF6347' : '#BADA55';
+    ctx.fillStyle = node.selected ? (selection.indexOf(node) === 0 ? '#35445c' : '#FF6347') : '#BADA55';
     ctx.fill();
     ctx.stroke();
 
@@ -230,7 +229,7 @@ function adjustCanvasSize() {
     canvas.height = Math.max(treeHeight, container.clientHeight);
 
     // Calculate the left padding to center the tree
-    const leftPadding = Math.max(0, (container.clientWidth - treeWidth) / 2);
+    //const leftPadding = Math.max(0, (container.clientWidth - treeWidth) / 2);
 
     // Apply left padding to the canvas
     //canvas.style.paddingLeft = `${leftPadding}px`;
@@ -246,25 +245,13 @@ window.addNode = function(parentValue, newValue) {
         alert("Please enter a valid node value.");
         return;
     }
-    console.log(parentValue);
     const parentNum = (parentValue && parentValue !== "None") ? parseInt(parentValue) : null;
-    console.log(parentNum);
     const newNum = parseInt(newValue);
 
     if (window.tree.insert(parentNum, newNum)) {
         adjustCanvasSize();
+        window.selectNode(newNum);
         drawTree();
-
-        // Select the new node:
-
-        console.log("newNum's type is",typeof newNum);
-        const newNode = window.tree.findNode(newNum); // Find the newly added node
-        if (selection) {
-            selection.selected = false; // Deselect the previous selection
-        }
-        selection = newNode;              // Select the new node
-        if (selection) selection.selected = true;
-        drawTree();                        // Redraw to highlight the selection
     }
 }
 
@@ -279,16 +266,19 @@ window.buildTreeAndSelectNode = function(conversation, queryId) {
 }
 
 window.selectNode = function(value) {
-    console.log("value at the start of selectNode",value);
-    console.log("type of value is",typeof value);
-    const foundNode = window.tree.findNode(parseInt(value,10)); // Find the newly added node
-    console.log("value of found node is",foundNode.value);
-    console.log("selection's selected value is",selection.selected);
-    if (selection) {
-        selection.selected = false; // Deselect the previous selection
-    }
-    selection = foundNode;              // Select the new node
-    if (selection) selection.selected = true;
+    const foundNode = window.tree.findNode(parseInt(value,10));
+    // if (selection) {
+    //     selection.selected = false; // Deselect the previous selection
+    // }
+    // selection = foundNode;              // Select the new node
+    // if (selection) selection.selected = true;
+    selection.forEach(node => {
+        node.selected = false;
+        //console.log("Deselected:", node.value);
+    });
+    selection = [foundNode];
+    foundNode.selected = true;
+    //console.log("Selected:", foundNode.value);
 }
 
 
@@ -310,19 +300,33 @@ function down(e) {
     const offsetY = canvas.offsetTop;  // Or a fixed offset value if needed
     const x = e.clientX - rect.left - offsetX;
     const y = e.clientY - rect.top - offsetY;
-    console.log("Click coordinates:", x, y);
     let target = within(x, y);
     if (target) {
         console.log("Node found:", target.value);
-        if (selection) {
-            selection.selected = false;
-            console.log("Deselected:", selection.value);
+        if(e.ctrlKey) 
+        {
+            //alert("ctrl + click!");
+            const index = selection.indexOf(target);
+            console.log(index);
+            if (index === -1) {
+                selection.push(target);
+                target.selected = true;
+                console.log("Added to selection:", target.value);
+            }
+            else if (index == 0) alert("Cannot unselected main merge node!");
+            else {
+                selection.splice(index, 1);
+                target.selected = false;
+                console.log("Removed from selection:", target.value);
+            }
         }
-        selection = target;
-        selection.selected = true;
-        console.log("Selected:", selection.value);
-        selectedNodeChanged(selection.value);
+        else
+        {
+            window.selectNode(target.value);
+            selectedNodeChanged(target.value);
+        }
         drawTree();
+        console.log("selection list is",selection);
     } else {
         console.log("No node found at click coordinates");
     }
