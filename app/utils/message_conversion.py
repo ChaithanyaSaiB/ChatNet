@@ -1,10 +1,9 @@
 from langchain_core.messages import HumanMessage, AIMessage
 
-def get_langchain_messages(conversation_history:str):
+def get_langchain_messages(conversation_history:list[dict]):
     messages = []
-    for dialogue in conversation_history:
-        if dialogue['role'] == "user" :
-            messages += [HumanMessage(content=dialogue['content'])]
-        else:
-            messages += [AIMessage(content=dialogue['content'])]
+    for conversation_unit in conversation_history:
+        messages += [HumanMessage(content=conversation_unit['query'])]
+        if "response" in conversation_unit:
+            messages += [AIMessage(content=conversation_unit['response'])]
     return messages

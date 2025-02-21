@@ -1,0 +1,19 @@
+body {
+    font-family: var(--font-primary);
+    font-size: var(--font-size-medium);
+    color: var(--color-text);
+    background-color: var(--color-background);
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+button {
+    cursor: pointer;
+}

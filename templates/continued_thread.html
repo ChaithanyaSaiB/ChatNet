@@ -1,39 +1,15 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+
+{% endblock %}
+
 {% block chat_pane %}
-<input type="hidden" name="thread_id" value="{{ thread_id }}">
-<input type="hidden" name="query_id" value="{{ query_id }}">
-<div id="chat-area">
-    {% for dialogue in conversation_history %}
-        <div class="query">
-            {% if dialogue["role"] == "user" %}
-                <h2 id="query-title">{{ dialogue["content"] }}</h2>
-            {% endif %}
-        </div>
-        <div class="sources">
-            <h5 class="sources-title">Sources</h5>
-            <a href="#" class="source-item"></a>
-            <a href="#" class="source-item"></a>
-        </div>
-        <div class="response">
-            <h3 class="response-title">Answer</h3>
-            {% if dialogue["role"] == "ai" %}
-                <p id="response-text">{{ dialogue["content"] }}</p>
-            {% endif %}
-        </div>
-        <div class="suggested-queries">
-            <h5 class="suggested-queries-title">Suggested Queries</h5>
-            <a href="#" class="suggested-query-item"></a>
-            <a href="#" class="suggested-query-item"></a>
-        </div>
-    {% endfor %}
-</div>
-<div class="user-input-area">
-    <textarea id="user-input" placeholder="Type your query here"></textarea>
-    <button id="send-button" onclick="sendQuery()">Send</button>
-</div>
+    {% include "chat_pane.html" %}
 {% endblock %}
 
 {% block extra_js %}
-<script src="static/js/continued_thread.js"></script>
+<script src="static/js/send_query.js"></script>
+<script src="static/js/construct_tree.js"></script>
+<script src="static/js/old_query_history.js"></script>
 {% endblock %}

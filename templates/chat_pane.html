@@ -1,0 +1,32 @@
+<input type="hidden" name="thread_id" value="{{ thread_id }}">
+<input type="hidden" name="query_id" value="{{ query_id }}">
+<div id="chat-area">
+    {% for conversation_unit in conversation_history %}
+        <div class="query">
+            <h2 id="query-title">{{ conversation_unit["query"] }}</h2>
+            <div class="query_id" data-value="{{ conversation_unit['query_id'] }}"></div>
+            <div class="parent_query_id" data-value="{{ conversation_unit['parent_query_id'] }}"></div>
+        </div>
+        <div class="sources">
+            {% if conversation_unit["search_results"] != [] %}
+                <h5 class="sources-title">Sources</h5>
+            {% endif %}
+            {% for source in conversation_unit["search_results"] %}
+                <a href="#" class="source-item">{{ source }}</a>
+            {% endfor %}
+        </div>
+        <div class="response">
+            <h3 class="response-title">Answer</h3>
+            <p id="response-text">{{ conversation_unit["response"] }}</p>
+        </div>
+        <div class="suggested-queries">
+            <h5 class="suggested-queries-title">Suggested Queries</h5>
+            <a href="#" class="suggested-query-item"></a>
+            <a href="#" class="suggested-query-item"></a>
+        </div>
+    {% endfor %}
+</div>
+<div class="user-input-area">
+    <textarea id="user-input" placeholder="Type your query here"></textarea>
+    <button id="send-button" onclick="sendQuery()">Send</button>
+</div>

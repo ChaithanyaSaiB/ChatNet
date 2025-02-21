@@ -1,0 +1,44 @@
+.main-menu {
+    background-color: #dfe6e9;
+    color: var(--color-text);
+    padding: var(--spacing-medium);
+}
+
+.chatnet-title {
+    text-align: center;
+    font-size: var(--font-size-xlarge);
+    font-weight: bold;
+    letter-spacing: 1px;
+    padding-bottom: var(--spacing-large);
+}
+
+.new-net-button {
+    display: inline-block;
+    background-color: var(--color-secondary);
+    color: white;
+    padding: var(--spacing-medium) var(--spacing-large);
+    border-radius: var(--border-radius-large);
+    margin-bottom: var(--spacing-large);
+    transition: all 0.3s ease;
+}
+
+.new-net-button:hover {
+    background-color: darken(var(--color-secondary), 10%);
+}
+
+.menu-item, .thread-item {
+    display: block;
+    padding: var(--spacing-medium);
+    margin-bottom: var(--spacing-small);
+    border-radius: var(--border-radius-small);
+    transition: background-color 0.3s ease;
+}
+
+.menu-item:hover, .thread-item:hover {
+    background-color: rgba(189, 195, 199, 0.8);
+}
+
+.thread-list {
+    margin-left: var(--spacing-large);
+    list-style: none;
+}

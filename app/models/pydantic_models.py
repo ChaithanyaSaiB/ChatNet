@@ -29,6 +29,9 @@ class ThreadCreation(BaseModel):
 class UserId(BaseModel):
     user_id: int
 
+class ThreadId(BaseModel):
+    thread_id: int
+
 class ContinueThread(BaseModel):
     thread_id: int  # Changed from str to int
     query_id: int
