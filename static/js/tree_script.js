@@ -260,7 +260,19 @@ window.buildTreeAndSelectNode = function(conversation, queryId) {
         conversation.forEach(conversation_unit => {
             window.addNode(conversation_unit.parent_query_id, conversation_unit.child_query_id);
         });
-        window.selectNode(queryId);
+        if (queryId.length === 1) {
+            window.selectNode(queryId[0]);
+        } 
+        else if (queryId.length > 1) {
+            window.selectNode(queryId[0]);
+            
+            const restOfIds = queryId.slice(1);
+            restOfIds.forEach(id => {
+                multiSelectionNodes(id, false);
+            });
+        }
+        else console.log("No query ID provided.");
+
         drawTree(); // Find the newly added node
     }
 }
@@ -293,6 +305,24 @@ function within(x, y) {
     return foundNode;
 }
 
+function multiSelectionNodes(value, treeInteraction) {
+    const target = window.tree.findNode(parseInt(value,10));
+    const index = selection.indexOf(target);
+    if (index === -1) {
+        selection.push(target);
+        target.selected = true;
+        if(treeInteraction) multipleSelectionChanged(target.value);
+        console.log("Added to selection:", target.value);
+    }
+    else if (index == 0) alert("Cannot unselected main merge node!");
+    else {
+        selection.splice(index, 1);
+        target.selected = false;
+        if(treeInteraction) multipleSelectionChanged(target.value);
+        console.log("Removed from selection:", target.value);
+    }
+    drawTree();
+}
 
 function down(e) {
     const rect = canvas.getBoundingClientRect();
@@ -306,26 +336,14 @@ function down(e) {
         if(e.ctrlKey) 
         {
             //alert("ctrl + click!");
-            const index = selection.indexOf(target);
-            console.log(index);
-            if (index === -1) {
-                selection.push(target);
-                target.selected = true;
-                console.log("Added to selection:", target.value);
-            }
-            else if (index == 0) alert("Cannot unselected main merge node!");
-            else {
-                selection.splice(index, 1);
-                target.selected = false;
-                console.log("Removed from selection:", target.value);
-            }
+            multiSelectionNodes(target.value, true);         
         }
         else
         {
             window.selectNode(target.value);
             selectedNodeChanged(target.value);
+            drawTree();
         }
-        drawTree();
         console.log("selection list is",selection);
     } else {
         console.log("No node found at click coordinates");

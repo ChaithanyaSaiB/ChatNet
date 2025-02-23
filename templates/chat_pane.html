@@ -1,5 +1,5 @@
 <input type="hidden" name="thread_id" value="{{ thread_id }}">
-<input type="hidden" name="query_id" value="{{ query_id }}">
+<input type="hidden" name="query_id" value="{{ query_id|join(', ') }}">
 <div id="chat-area">
     {% for conversation_unit in conversation_history %}
         <div class="query">

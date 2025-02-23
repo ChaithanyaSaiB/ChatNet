@@ -2,7 +2,7 @@ from uuid import UUID
 from datetime import datetime
 from typing import List, Optional
 from typing import Tuple as PyTuple
-from sqlalchemy import ARRAY, Integer, desc, or_
+from sqlalchemy import ARRAY, Integer, String, case, cast, column, desc, literal_column, nulls_first, or_, text, values
 from sqlalchemy.orm import Session, joinedload
 from app.models.thread import Thread
 from app.models.query import Query
@@ -130,8 +130,6 @@ class ConversationManager(BaseService):
 
                 conversation_history.append(conversation_item)
             return conversation_history
-
-
         except Exception as e:
             self.handle_error(e)
     
@@ -148,5 +146,135 @@ class ConversationManager(BaseService):
         except Exception as e:
             print(e)
             self.handle_error(e)
+    
+    def get_multiple_query_conversation_history(self, query_ids: List[int], just_query_ids: List[int]):
+        try:
+            # Check if the queries exist
+            existing_queries = self.db.query(Query.query_id).filter(Query.query_id.in_(query_ids)).all()
+            existing_ids = [q.query_id for q in existing_queries]
+            if len(existing_ids) != len(query_ids):
+                missing_ids = set(query_ids) - set(existing_ids)
+                raise ValueError(f"The following query IDs do not exist: {missing_ids}")
 
-        
+            # Create input_order CTE using explicit VALUES
+            input_order_values = values(
+                column("query_id", Integer),
+                column("input_order", Integer),
+                name="input_order_values"
+            ).data([(qid, i+1) for i, qid in enumerate(query_ids)])
+
+            input_order = select(input_order_values).cte("input_order")
+
+            # Recursive CTE remains the same
+            QueryCTE = aliased(Query)
+            RelationCTE = aliased(QueryRelation)
+            recursive_cte = (
+                select(QueryCTE.query_id, RelationCTE.parent_query_id, func.cast(0, Integer).label('depth'))
+                .join(RelationCTE, RelationCTE.child_query_id == QueryCTE.query_id)
+                .where(QueryCTE.query_id.in_(query_ids))
+                .cte(recursive=True)
+            )
+
+            ancestors = recursive_cte.union_all(
+                select(QueryCTE.query_id, RelationCTE.parent_query_id, (recursive_cte.c.depth + 1).label('depth'))
+                .join(RelationCTE, RelationCTE.child_query_id == QueryCTE.query_id)
+                .join(recursive_cte, recursive_cte.c.parent_query_id == QueryCTE.query_id)
+            )
+
+            # Modified main query
+            query_chain = (
+                self.db.query(
+                    Query,
+                    QueryRelation.parent_query_id,
+                    ancestors.c.depth,
+                    func.coalesce(input_order.c.input_order, 9999).label("input_order")  # 9999 as high number for ancestors
+                )
+                .join(ancestors, ancestors.c.query_id == Query.query_id, isouter=True)
+                .outerjoin(QueryRelation, QueryRelation.child_query_id == Query.query_id)
+                .outerjoin(input_order, input_order.c.query_id == Query.query_id)
+                .filter(or_(Query.query_id.in_(query_ids), Query.query_id == ancestors.c.query_id))
+                .order_by(
+                    "input_order",  # Order by original input position first
+                    ancestors.c.depth  # Then by depth for ancestors
+                )
+                .all()
+            )
+
+            # print(query_chain)
+            for q, parent_query_id, depth, input_order in query_chain:
+                print(q.query_id, parent_query_id, depth, input_order)
+            print("-----------------")
+
+            query_nodes = []
+            remaining_nodes = []
+
+            for q in query_chain:
+                if q[2] == 0:
+                    query_nodes.append(q)
+                else:
+                    remaining_nodes.append(q)
+            
+            #print(query_nodes)
+            #print(remaining_nodes)
+
+            def build_subtree(query_node, remaining_nodes, depth, query_path):
+                
+                depth += 1
+                # Find direct children of this node
+                child = [remaining_node for remaining_node in remaining_nodes if remaining_node[0].query_id == query_node[1] and depth == remaining_node[2]][0]
+                print(child[0].query_id, child[1], depth)
+                query_path.append(child)
+                if child[1] != None:
+                    #print("working")
+                    build_subtree(child, remaining_nodes, depth, query_path)
+                return query_path
+
+            def build_conversation_tree(query_nodes, remaining_nodes):
+                conversation_tree = []
+                for query_node in query_nodes:
+                    if query_node[0].query_id in just_query_ids:
+                        conversation_tree.append(query_node)                        
+                    else:
+                        depth = query_node[2]
+                        query_path = [query_node]
+                        branch = build_subtree(query_node, remaining_nodes, depth, query_path)
+                        conversation_tree.extend(branch[::-1])
+                return conversation_tree
+
+            # Build the conversation tree
+            if len(remaining_nodes) == 0:
+                conversation_tree = query_nodes
+            else:
+                conversation_tree = build_conversation_tree(query_nodes, remaining_nodes)
+
+            print(conversation_tree)
+
+            for q, parent_query_id, depth, _ in conversation_tree:
+                print(q.query_id, parent_query_id, depth)
+
+            conversation_history = []
+            processed_ids = set()
+            for q, parent_query_id, depth, _ in conversation_tree:                            
+                # Fetch search results
+                search_results = self.db.query(SearchResult).filter(SearchResult.query_id == q.query_id).all()
+                search_result_urls = [sr.url for sr in search_results] if search_results else []
+                
+                # Create dictionary for this query-response pair
+                conversation_item = {
+                    "query_id": q.query_id,
+                    "parent_query_id": parent_query_id,
+                    "query": q.query_text,
+                    "response": q.ai_response,
+                    "search_results": search_result_urls, # List of URLs
+                    "depth": depth
+                }
+
+                conversation_history.append(conversation_item)
+                processed_ids.add(q.query_id)
+
+            return conversation_history
+
+        except Exception as e:
+            self.handle_error(e)
+
+    

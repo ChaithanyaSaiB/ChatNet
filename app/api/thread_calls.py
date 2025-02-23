@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 from fastapi import APIRouter, Depends, Request, Query as fastapi_query, Cookie
 from fastapi.responses import JSONResponse, RedirectResponse
 from sqlalchemy.orm import Session
@@ -33,33 +33,37 @@ def thread_conversations(
 def get_thread(
     request: Request,
     thread_id: int = fastapi_query(..., description="The ID of the thread"),
-    query_id: Optional[int] = fastapi_query(None, description="The ID of the query (optional)"),
+    query_id: Optional[List[int]] = fastapi_query(None, description="The ID of the query (optional)"),
     json_response_format: Optional[bool] = fastapi_query(None, description="True when response format is json (optional)"),
     conversation_manager: ConversationManager = Depends(get_conversation_manager)
 ):
-    if not query_id:
+    if query_id is None:
         query_id = conversation_manager.get_latest_query_id(thread_id=thread_id)
-        conversation_history = conversation_manager.get_query_conversation_history(query_id=query_id)
+        conversation_history = conversation_manager.get_multiple_query_conversation_history(query_ids=[query_id], just_query_ids=[])
 
         return templates.TemplateResponse(
-            "continued_thread.html", 
+            "continued_thread.html",
             {
                 "request": request,
                 "thread_id": thread_id,
-                "query_id": query_id,
+                "query_id": [query_id],
                 "conversation_history": conversation_history
             }
         )
     else:
-        conversation_history = conversation_manager.get_query_conversation_history(query_id=query_id)
-        
+        if len(query_id) == 1:
+            conversation_history = conversation_manager.get_multiple_query_conversation_history(query_ids=query_id, just_query_ids=[])
+        else:
+            conversation_history = conversation_manager.get_multiple_query_conversation_history(query_ids=query_id, just_query_ids=[])    
         if json_response_format:
+            print(thread_id, query_id, conversation_history)
             html_content = templates.get_template("chat_pane.html").render(
                 request=request,
                 thread_id=thread_id,
                 query_id=query_id,
                 conversation_history=conversation_history
             )
+            
 
             # Return JSON response
             return JSONResponse(content={
@@ -68,7 +72,7 @@ def get_thread(
                 "query_id": query_id
             })
         else:
-            conversation_history = conversation_manager.get_query_conversation_history(query_id=query_id)
+            #conversation_history = conversation_manager.get_query_conversation_history(query_id=query_id)
 
             return templates.TemplateResponse(
                 "continued_thread.html", 

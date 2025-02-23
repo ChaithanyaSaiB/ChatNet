@@ -12,7 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // });
     
     const threadId = parseInt(document.querySelector('input[name="thread_id"]').value, 10);
-    const queryId = document.querySelector('input[name="query_id"]').value;
+    const queryIdsString = document.querySelector('input[name="query_id"]').value;
+    const queryIdsList = queryIdsString.split(', ').map(Number);
     
     console.log("construct tree working!");
     fetch('/thread_conversation_history', {
@@ -22,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     })
     .then(response => response.json())
     .then(conversation => {
-        window.buildTreeAndSelectNode(conversation, queryId);
+        window.buildTreeAndSelectNode(conversation, queryIdsList);
     })
     .catch(error => console.error('Error loading thread conversation history:', error));
 
