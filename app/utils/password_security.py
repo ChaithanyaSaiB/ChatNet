@@ -1,4 +1,8 @@
+from datetime import datetime, timedelta
 from passlib.context import CryptContext
+from jose import jwt
+import os
+from typing import Union
 
 # Create a password context using bcrypt, which is a strong hashing algorithm
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -21,3 +25,13 @@ def get_password_hash(password: str) -> str:
     :return: The hashed password
     """
     return pwd_context.hash(password)
+
+def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.now() + expires_delta
+    else:
+        expire = datetime.now() + timedelta(minutes=int(os.environ["ACCESS_TOKEN_EXPIRE_MINUTES"]))
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, os.environ["SECRET_KEY"], algorithm=os.environ["ALGORITHM"])
+    return encoded_jwt

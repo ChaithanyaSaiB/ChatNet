@@ -5,7 +5,7 @@
         <div class="query">
             <h2 id="query-title">{{ conversation_unit["query"] }}</h2>
             <div class="query_id" data-value="{{ conversation_unit['query_id'] }}"></div>
-            <div class="parent_query_id" data-value="{{ conversation_unit['parent_query_id'] }}"></div>
+            <div class="parent_query_id" data-value="{% if conversation_unit['parent_query_ids'] is not none %}{{ conversation_unit['parent_query_ids']|string }}{% else %}none{% endif %}"></div>
         </div>
         <div class="sources">
             {% if conversation_unit["search_results"] != [] %}

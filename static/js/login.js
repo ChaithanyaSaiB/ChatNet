@@ -6,34 +6,39 @@ document.addEventListener('DOMContentLoaded', function() {
         const username = document.querySelector('input[placeholder="Username"]').value;
         const password = document.querySelector('input[placeholder="Password"]').value;
 
-        fetch('/user_login', {
+        fetch('/token', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: JSON.stringify({
+            body: new URLSearchParams({
                 username: username,
                 password: password
             })
         })
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Login failed');
+            if (response.status == 401) {
+                alert("Incorrect username or password. Please try again.");
+                form.reset();
+                throw new Error("Incorrect username or password");
             }
-            return response.json();
+            else if (response.status == 200) {
+                return response.json();
+            }
+            else
+            {
+                alert("Login failed. Please try again.");
+                form.reset();
+                throw new Error("Login failed");
+            }
         })
-        .then(data => {         
-            // Store user ID and username in cookies
-            document.cookie = `user_id=${data.user_id}; path=/; max-age=3600`; // Cookie expires in 1 hour
-            document.cookie = `username=${data.username}; path=/; max-age=3600`; // Cookie expires in 1 hour
-            
-            // Redirect to home page
-            window.location.href = data.redirect;
+        .then(data => {
+            alert("Login successful!");
+            localStorage.setItem("access_token", data.access_token);  // Store token
+            window.location.href = "/";  // Redirect to dashboard
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Login failed. Please check your username and password.');
-        });        
+        }); 
     });
 });

@@ -3,15 +3,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const logoutButton = document.querySelector('.logout-button');
     const usernameDisplay = document.querySelector('.username-display');
 
-    window.getCookie = function(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-    };   
+    window.getUserDetailFromToken = function(name) {
+        const token = localStorage.getItem("access_token");
+        if (!token) return null;
+
+        try {
+            const payload = JSON.parse(atob(token.split(".")[1]));  // Decode JWT payload
+            return payload[name];  // Use dynamic key access
+        } catch (error) {
+            console.error("Invalid token:", error);
+            return null;
+        }
+    }
 
     function logout() {
-        document.cookie = "user_id=; path=/; max-age=0;";
-        document.cookie = "username=; path=/; max-age=0;";
+        localStorage.removeItem("access_token");
         loginButton.style.display = 'flex';
         logoutButton.style.display = 'none';
         usernameDisplay.textContent = '';
@@ -20,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function loadThreads() {
-        const userId = getCookie('user_id');
+        const userId = getUserDetailFromToken('user_id');
         if (userId) {
             fetch('/list_threads', {
                 method: 'POST',
@@ -48,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    const username = getCookie('username');
+    const username = getUserDetailFromToken('username');
     if (username) {
         loginButton.style.display = 'none';
         usernameDisplay.textContent = username;

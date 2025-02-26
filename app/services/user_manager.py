@@ -1,8 +1,15 @@
+import os
 from typing import Optional
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
+from jose import JWTError, jwt
 from app.services.base_service import BaseService
+from app.models.pydantic_models import TokenData
 from app.models.user import User
-from app.core.password_security import verify_password, get_password_hash
+from app.utils.password_security import verify_password, get_password_hash
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
 
 class UserManager(BaseService):
     def __init__(self, db: Session):
@@ -33,3 +40,22 @@ class UserManager(BaseService):
 
     def get_user_by_id(self, user_id: int) -> Optional[User]:
         return self.get_by_id(User, user_id)
+    
+    def get_current_user(self, token: str = Depends(oauth2_scheme)):
+        credentials_exception = HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+        try:
+            payload = jwt.decode(token, os.environ["SECRET_KEY"], algorithms=[os.environ["ALGORITHM"]])
+            username: str = payload.get("sub")
+            if username is None:
+                raise credentials_exception
+            token_data = TokenData(username=username)
+        except JWTError:
+            raise credentials_exception
+        user = self.get_user_by_username(self.db, username=token_data.username)
+        if user is None:
+            raise credentials_exception
+        return user

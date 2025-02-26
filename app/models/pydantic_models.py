@@ -18,7 +18,7 @@ class ChatMessage(BaseModel):
 class ChatResponse(BaseModel):
     response: str
 
-class UserAccess(BaseModel):
+class UserCreate(BaseModel):
     username: str
     password: str
 
@@ -33,7 +33,8 @@ class ThreadId(BaseModel):
     thread_id: int
 
 class ContinueThread(BaseModel):
-    thread_id: int  # Changed from str to int
-    query_id: int
     query: str
     user_id: int
+
+class TokenData(BaseModel):
+    username: Union[str, None] = None

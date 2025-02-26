@@ -1,5 +1,5 @@
 class TreeNode {
-    constructor(value, x, y) {
+    constructor(value, x, y, merged_status) {
         this.value = value;
         this.children = [];
         this.x = x;
@@ -7,6 +7,7 @@ class TreeNode {
         this.radius = 20;
         this.selected = false;
         this.parent = null;
+        this.merged = merged_status;
     }
 }
 
@@ -16,8 +17,8 @@ class Tree {
         this.nodes = [];
     }
 
-    insert(parentValue, newValue) {
-        const newNode = new TreeNode(newValue, 0, 0);
+    insert(parentValue, newValue, merged_status) {
+        const newNode = new TreeNode(newValue, 0, 0, merged_status);
 
         if (parentValue === null) {
             // If there's no root, create one
@@ -197,6 +198,13 @@ function drawNode(node, levelHeight, nodeSpacing) {
     node.children.forEach(child => {
         ctx.beginPath();
         ctx.moveTo(node.x, node.y + node.radius);
+
+        if (child.merged) {
+            ctx.setLineDash([5, 5]); // Set a dashed line pattern
+        } else {
+            ctx.setLineDash([]); // Set a solid line
+        }
+
         ctx.lineTo(child.x, child.y - child.radius);
         ctx.stroke();
     });
@@ -204,6 +212,7 @@ function drawNode(node, levelHeight, nodeSpacing) {
     // Draw node circle
     ctx.beginPath();
     ctx.arc(node.x, node.y, node.radius, 0, 2 * Math.PI);
+    ctx.setLineDash([]); // Set a solid line
     ctx.fillStyle = node.selected ? (selection.indexOf(node) === 0 ? '#35445c' : '#FF6347') : '#BADA55';
     ctx.fill();
     ctx.stroke();
@@ -240,7 +249,7 @@ function adjustCanvasSize() {
 // Call this function after adding nodes and on window resize
 window.addEventListener('resize', adjustCanvasSize);
 
-window.addNode = function(parentValue, newValue) {
+window.addNode = function(parentValue, newValue, merged_status) {
     if (!newValue) {
         alert("Please enter a valid node value.");
         return;
@@ -248,7 +257,7 @@ window.addNode = function(parentValue, newValue) {
     const parentNum = (parentValue && parentValue !== "None") ? parseInt(parentValue) : null;
     const newNum = parseInt(newValue);
 
-    if (window.tree.insert(parentNum, newNum)) {
+    if (window.tree.insert(parentNum, newNum, merged_status)) {
         adjustCanvasSize();
         window.selectNode(newNum);
         drawTree();
@@ -258,7 +267,15 @@ window.addNode = function(parentValue, newValue) {
 window.buildTreeAndSelectNode = function(conversation, queryId) {
     if (conversation.length !== 0) {
         conversation.forEach(conversation_unit => {
-            window.addNode(conversation_unit.parent_query_id, conversation_unit.child_query_id);
+            if (conversation_unit.parent_query_ids.length == 1)
+            {
+                window.addNode(conversation_unit.parent_query_ids[0], conversation_unit.child_query_id, false);
+            }
+            else
+            {
+                window.addNode(conversation_unit.parent_query_ids[0], conversation_unit.child_query_id, true);
+                
+            }
         });
         if (queryId.length === 1) {
             window.selectNode(queryId[0]);

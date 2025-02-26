@@ -40,7 +40,7 @@ def get_thread(
     if query_id is None:
         query_id = conversation_manager.get_latest_query_id(thread_id=thread_id)
         conversation_history = conversation_manager.get_multiple_query_conversation_history(query_ids=[query_id], just_query_ids=[])
-
+        
         return templates.TemplateResponse(
             "continued_thread.html",
             {
@@ -51,19 +51,14 @@ def get_thread(
             }
         )
     else:
-        if len(query_id) == 1:
-            conversation_history = conversation_manager.get_multiple_query_conversation_history(query_ids=query_id, just_query_ids=[])
-        else:
-            conversation_history = conversation_manager.get_multiple_query_conversation_history(query_ids=query_id, just_query_ids=[])    
+        conversation_history = conversation_manager.get_multiple_query_conversation_history(query_ids=query_id, just_query_ids=[])
         if json_response_format:
-            print(thread_id, query_id, conversation_history)
             html_content = templates.get_template("chat_pane.html").render(
                 request=request,
                 thread_id=thread_id,
                 query_id=query_id,
                 conversation_history=conversation_history
             )
-            
 
             # Return JSON response
             return JSONResponse(content={
@@ -72,8 +67,6 @@ def get_thread(
                 "query_id": query_id
             })
         else:
-            #conversation_history = conversation_manager.get_query_conversation_history(query_id=query_id)
-
             return templates.TemplateResponse(
                 "continued_thread.html", 
                 {
@@ -87,19 +80,22 @@ def get_thread(
 @router.post("/thread")
 async def post_thread(
     request: Request,
+    continue_thread: ContinueThread,
     thread_id: int = fastapi_query(..., description="The ID of the thread"),
+    query_id: Optional[List[int]] = fastapi_query(None, description="The ID of the query (optional)"),
     conversation_manager: ConversationManager = Depends(get_conversation_manager)
 ):
-    thread_continuation = await request.json()
-    conversation_history = conversation_manager.get_query_conversation_history(
-        query_id=thread_continuation["query_id"]
+    #thread_continuation = await request.json()
+    conversation_history = conversation_manager.get_multiple_query_conversation_history(
+        query_ids=query_id, 
+        just_query_ids=[]
     )
     updated_conversation_history = conversation_manager.create_query_with_response(
         thread_id=thread_id,
-        user_id=thread_continuation["user_id"],
-        query_content=thread_continuation["query"],
+        user_id=continue_thread.user_id,
+        query_content=continue_thread.query,
         conversation_history=conversation_history,
-        parent_query_id=thread_continuation["query_id"]
+        parent_query_ids=query_id
     )
     return JSONResponse(content={
         "thread_id": thread_id,

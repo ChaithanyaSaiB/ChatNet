@@ -11,8 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert("Passwords do not match!");
             return;
         }
-
-        fetch('/user_signup', {
+        fetch('/signup', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -24,21 +23,23 @@ document.addEventListener('DOMContentLoaded', function() {
             })
         })
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            if (response.status == 400) {
+                alert("Username already exists. Please choose a different username.");
+                form.reset();
+                throw new Error("Username already exists");
             }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Signup successful:', data);
-            alert(data.message);  // Show the success message
-            if (data.redirect) {
-                window.location.href = data.redirect;  // Redirect to login page
+            else if (response.status == 201) {
+                alert("Signup successful!");  // Show the success message
+                window.location.href = "/login";
+            }
+            else {
+                alert("Signup failed. Please try again.");
+                form.reset();
+                throw new Error("Signup failed");
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Signup failed. Please try again.');
         });
     });
 });

@@ -132,7 +132,7 @@ body {
     border-bottom: 1px solid rgba(96, 93, 93, 0.2); /* 40% Opacity */
 }
 
-.login-button {
+.login-button, .logout-button {
     text-decoration: none;
     background-color: #3498db;
     color: white;

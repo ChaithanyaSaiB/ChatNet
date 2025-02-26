@@ -1,8 +1,29 @@
+function buildDynamicURL(threadId, queryIds, json) {
+    const baseURL = '/thread?thread_id=' + threadId;
+    let queryParams = '';
+
+    if (Array.isArray(queryIds)) {
+        // If queryIds is an array, handle multiple query IDs
+        queryParams = queryIds.map(id => 'query_id=' + id).join('&');
+    } else if (queryIds !== undefined && queryIds !== null) {
+        // If queryIds is a single value (and not undefined or null), handle single query ID
+        queryParams = 'query_id=' + queryIds;
+    }
+    else console.error('Invalid query ID(s) provided:', queryIds);
+
+    if (json) 
+        return baseURL + (queryParams ? '&' + queryParams : '') + '&json_response_format=true';
+    else
+    {
+        return baseURL + (queryParams ? '&' + queryParams : '');
+    }
+}
+
 function sendQuery() {
     const userInput = document.getElementById('user-input').value;
     const threadId = parseInt(document.querySelector('input[name="thread_id"]').value, 10);
-    const queryId = document.querySelector('input[name="query_id"]').value;
-
+    const queryIdsString = document.querySelector('input[name="query_id"]').value;
+    const queryIdsList = queryIdsString.split(', ').map(Number);
     document.getElementById('user-input').value = '';
 
     const chatArea = document.getElementById('chat-area');
@@ -12,12 +33,12 @@ function sendQuery() {
             </div>
         `;
 
-    fetch('/thread?thread_id='+threadId, {
+    fetch(buildDynamicURL(threadId, queryIdsList, false), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            thread_id: threadId,
-            query_id: queryId,
+            //thread_id: threadId,
+            //query_id: queryId,
             query: userInput,
             user_id: getCookie('user_id')
         }),
@@ -35,7 +56,15 @@ function sendQuery() {
         `;
         console.log("latest_quest_id",lastConversationUnit.query_id);
         history.pushState(null, '', `/thread?thread_id=${threadId}&query_id=${lastConversationUnit["query_id"]}`);
-        window.addNode(lastConversationUnit.parent_query_id, lastConversationUnit.query_id);
+        console.log(lastConversationUnit.parent_query_ids);
+        if (lastConversationUnit.parent_query_ids.length > 1) 
+        {
+            window.addNode(lastConversationUnit.parent_query_ids[0], lastConversationUnit.query_id, true);
+        }
+        else
+        {
+            window.addNode(lastConversationUnit.parent_query_ids[0], lastConversationUnit.query_id, false);
+        }
     })
     .catch((error) => console.error('Error:', error));
 }
