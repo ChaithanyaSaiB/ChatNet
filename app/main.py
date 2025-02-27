@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, func
@@ -7,6 +7,7 @@ from app.api import chat, user_access, thread_calls
 import os
 from contextlib import asynccontextmanager
 from fastapi.templating import Jinja2Templates
+from app.core.templates import templates
 from app.core.database import Base, engine
 from app.utils.api_error import APIError
 from app.utils.langchain_utils import create_agent
@@ -50,3 +51,10 @@ async def api_error_handler(request: Request, exc: APIError):
         content={"error": exc.message}
     )
 
+# @app.exception_handler(HTTPException)
+# async def http_exception_handler(request: Request, exc: HTTPException):
+#     return templates.TemplateResponse(
+#         "error.html",
+#         {"request": request, "status_code": exc.status_code, "detail": exc.detail},
+#         status_code=exc.status_code
+#     )

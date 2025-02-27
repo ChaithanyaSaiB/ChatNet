@@ -3,30 +3,28 @@ document.addEventListener('DOMContentLoaded', function() {
     const logoutButton = document.querySelector('.logout-button');
     const usernameDisplay = document.querySelector('.username-display');
 
-    window.getUserDetailFromToken = function(name) {
-        const token = localStorage.getItem("access_token");
-        if (!token) return null;
-
-        try {
-            const payload = JSON.parse(atob(token.split(".")[1]));  // Decode JWT payload
-            return payload[name];  // Use dynamic key access
-        } catch (error) {
-            console.error("Invalid token:", error);
-            return null;
-        }
-    }
-
     function logout() {
-        localStorage.removeItem("access_token");
-        loginButton.style.display = 'flex';
-        logoutButton.style.display = 'none';
-        usernameDisplay.textContent = '';
-        usernameDisplay.style.display = 'none';
-        window.location.reload();
+
+        fetch('/logout', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            window.location.href = "/";
+        })
+        .catch(error => console.error('Error getting user info:', error));
+        
+        // loginButton.style.display = 'flex';
+        // logoutButton.style.display = 'none';
+        // usernameDisplay.textContent = '';
+        // usernameDisplay.style.display = 'none';
+        // window.location.reload();
     }
 
-    function loadThreads() {
-        const userId = getUserDetailFromToken('user_id');
+    function loadThreads(userId) {
         if (userId) {
             fetch('/list_threads', {
                 method: 'POST',
@@ -52,16 +50,39 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => console.error('Error loading threads:', error));
         }
+        else
+        {
+            const threadList = document.querySelector('.thread-list');
+            const emptyMessage = document.createElement('li');
+            emptyMessage.textContent = 'Login to see your threads!';
+            emptyMessage.className = 'empty-thread-message';
+            threadList.appendChild(emptyMessage);
+        }
     }
 
-    const username = getUserDetailFromToken('username');
-    if (username) {
-        loginButton.style.display = 'none';
-        usernameDisplay.textContent = username;
-        usernameDisplay.style.display = 'flex';
-        logoutButton.style.display = 'flex';
-        loadThreads();
-    }
+    fetch('/me', {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => response.json())
+    .then(user => {
+        if (user.username) {
+            loginButton.style.display = 'none';
+            usernameDisplay.textContent = user.username;
+            usernameDisplay.style.display = 'flex';
+            logoutButton.style.display = 'flex';
+            loadThreads(user.user_id);
+        }
+        else
+        {
+            loadThreads(null)
+        }
+    })
+    .catch(error => console.error('Error getting user info:', error));
+
+
+    
 
     logoutButton.addEventListener('click', logout);
 

@@ -35,12 +35,14 @@ function sendQuery() {
 
     fetch(buildDynamicURL(threadId, queryIdsList, false), {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
         body: JSON.stringify({
             //thread_id: threadId,
             //query_id: queryId,
-            query: userInput,
-            user_id: getCookie('user_id')
+            query: userInput
         }),
     })
     .then(response => response.json())

@@ -1,6 +1,6 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
-from jose import jwt
+from jose import JWTError, jwt
 import os
 from typing import Union
 
@@ -29,9 +29,16 @@ def get_password_hash(password: str) -> str:
 def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.now() + expires_delta
+        expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.now() + timedelta(minutes=int(os.environ["ACCESS_TOKEN_EXPIRE_MINUTES"]))
+        expire = datetime.now(timezone.utc) + timedelta(minutes=int(os.environ["ACCESS_TOKEN_EXPIRE_MINUTES"]))
     to_encode.update({"exp": expire})
+    print("time expires",to_encode)
     encoded_jwt = jwt.encode(to_encode, os.environ["SECRET_KEY"], algorithm=os.environ["ALGORITHM"])
     return encoded_jwt
+
+def decode_access_token(token: str):
+    try:
+        return jwt.decode(token, os.environ["SECRET_KEY"], algorithms=[os.environ["ALGORITHM"]])
+    except JWTError:
+        return None

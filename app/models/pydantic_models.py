@@ -22,8 +22,7 @@ class UserCreate(BaseModel):
     username: str
     password: str
 
-class ThreadCreation(BaseModel):
-    user_id: int  # Changed from str to int
+class QueryText(BaseModel):
     query: str
 
 class UserId(BaseModel):
@@ -31,10 +30,6 @@ class UserId(BaseModel):
 
 class ThreadId(BaseModel):
     thread_id: int
-
-class ContinueThread(BaseModel):
-    query: str
-    user_id: int
 
 class TokenData(BaseModel):
     username: Union[str, None] = None
