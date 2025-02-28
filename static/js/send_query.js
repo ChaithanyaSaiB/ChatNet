@@ -55,11 +55,11 @@ function sendQuery() {
         console.log(lastConversationUnit.parent_query_ids);
         if (lastConversationUnit.parent_query_ids.length > 1) 
         {
-            window.addNode(lastConversationUnit.parent_query_ids[0], lastConversationUnit.query_id, true);
+            window.addNode(lastConversationUnit.parent_query_ids[0], lastConversationUnit.query_id, true, truncateString(lastConversationUnit.query), truncateString(lastConversationUnit.response));
         }
         else
         {
-            window.addNode(lastConversationUnit.parent_query_ids[0], lastConversationUnit.query_id, false);
+            window.addNode(lastConversationUnit.parent_query_ids[0], lastConversationUnit.query_id, false, truncateString(lastConversationUnit.query), truncateString(lastConversationUnit.response));
         }
     })
     .catch((error) => console.error('Error:', error));

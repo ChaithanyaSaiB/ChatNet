@@ -3,6 +3,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const logoutButton = document.querySelector('.logout-button');
     const usernameDisplay = document.querySelector('.username-display');
 
+    function capitalizeString(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
     function logout() {
 
         fetch('/logout', {
@@ -69,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(user => {
         if (user.username) {
             loginButton.style.display = 'none';
-            usernameDisplay.textContent = user.username;
+            usernameDisplay.textContent = "Welcome " + capitalizeString(user.username) + " !";
             usernameDisplay.style.display = 'flex';
             logoutButton.style.display = 'flex';
             loadThreads(user.user_id);

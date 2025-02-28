@@ -1,14 +1,25 @@
 class TreeNode {
-    constructor(value, x, y, merged_status) {
+    constructor(value, x, y, merged_status, queryText = "", aiResponse = "") {
         this.value = value;
         this.children = [];
         this.x = x;
         this.y = y;
-        this.radius = 20;
+        this.queryText = queryText;
+        this.aiResponse = aiResponse;
+        this.width = 100;  // Width of the rectangle
+        this.height = 40; // Height of the rectangle
+        this.radius = this.height / 2; //radius will be half height
         this.selected = false;
         this.parent = null;
         this.merged = merged_status;
     }
+}
+
+function truncateString(str, maxLength = 15) {
+    if (str.length > maxLength) {
+      return str.slice(0, maxLength) + '...';
+    }
+    return str;
 }
 
 class Tree {
@@ -17,8 +28,8 @@ class Tree {
         this.nodes = [];
     }
 
-    insert(parentValue, newValue, merged_status) {
-        const newNode = new TreeNode(newValue, 0, 0, merged_status);
+    insert(parentValue, newValue, merged_status, queryText, aiResponse) {
+        const newNode = new TreeNode(newValue, 0, 0, merged_status, queryText, aiResponse);
 
         if (parentValue === null) {
             // If there's no root, create one
@@ -69,7 +80,7 @@ class Tree {
         this.nodes.forEach(node => {
             if (node.y > maxY) maxY = node.y;
         });
-        return maxY + 100; // Extra padding
+        return maxY; // Extra padding
     }
 
     detectCollisions() {
@@ -80,20 +91,21 @@ class Tree {
                 const b = this.nodes[j];
                 const dx = a.x - b.x;
                 const dy = a.y - b.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                if (distance < (a.radius + b.radius) * 1.3) { // Increased buffer
+    
+                // Use rectangular collision detection
+                if (Math.abs(dx) < (a.width + b.width) / 2 * 1.3 && Math.abs(dy) < (a.height + b.height) / 2 * 1.3) {
                     collisions.push({ node1: a, node2: b });
                 }
             }
         }
         return collisions;
-    }
+    }    
 
     resolveCollisions(collisions) {
         collisions.forEach(collision => {
             const node1 = collision.node1;
             const node2 = collision.node2;
-            const shift = node1.radius * 2.5;
+            const shift = node1.radius * 3; // Increase the shift amount significantly
 
             // Determine direction to push apart
             let dx = node2.x - node1.x;
@@ -110,11 +122,11 @@ class Tree {
             node1.x -= dx * shift;
             node1.y -= dx * shift;
 
-            // Recursively reposition parents
-            this.repositionParent(node1, dx * -shift * 0.3); // Reduce shift amount
-            this.repositionParent(node2, dx * shift * 0.3);  // Reduce shift amount
+            // Recursively reposition parents - reduce shift for higher levels
+            this.repositionParent(node1, dx * -shift * 0.2); // Further reduced shift
+            this.repositionParent(node2, dx * shift * 0.2);  // Further reduced shift
         });
-    }
+    }   
 
     repositionParent(node, shiftX) {
         if (!node.parent) return;  // Base case: if no parent, stop recursion
@@ -122,7 +134,15 @@ class Tree {
         node.parent.x += shiftX;
 
         // Continue repositioning up the tree
-        this.repositionParent(node.parent, shiftX * 0.3); // Reduced shift for higher levels
+        this.repositionParent(node.parent, shiftX * 0.1); // Reduced shift for higher levels
+    }
+
+    adjustPositions() {
+        if (this.root) {
+            //calculateLevelPositions(this.root, levelHeight, nodeSpacing);
+            let collisions = this.detectCollisions();
+            this.resolveCollisions(collisions);
+        }
     }
 }
 
@@ -183,7 +203,7 @@ function adjustPositionForCollisions(node) {
 function drawTree() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const levelHeight = 100;
-    const nodeSpacing = 60;
+    const nodeSpacing = 120;
 
     calculateLevelPositions(window.tree.root, levelHeight, nodeSpacing);
 
@@ -209,19 +229,20 @@ function drawNode(node, levelHeight, nodeSpacing) {
         ctx.stroke();
     });
 
-    // Draw node circle
+    // Draw node rectangle
     ctx.beginPath();
-    ctx.arc(node.x, node.y, node.radius, 0, 2 * Math.PI);
+    ctx.rect(node.x - node.width / 2, node.y - node.height / 2, node.width, node.height);
     ctx.setLineDash([]); // Set a solid line
     ctx.fillStyle = node.selected ? (selection.indexOf(node) === 0 ? '#35445c' : '#FF6347') : '#BADA55';
     ctx.fill();
     ctx.stroke();
 
-    // Draw node label
+    // Draw text lines
     ctx.fillStyle = 'black';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(node.value, node.x, node.y);
+    ctx.fillText(node.queryText, node.x, node.y - 10); // Adjust vertical position for the first line
+    ctx.fillText(node.aiResponse, node.x, node.y + 10); // Adjust vertical position for the second line
 
     // Recursively draw children
     node.children.forEach(child => drawNode(child, levelHeight, nodeSpacing));
@@ -249,7 +270,7 @@ function adjustCanvasSize() {
 // Call this function after adding nodes and on window resize
 window.addEventListener('resize', adjustCanvasSize);
 
-window.addNode = function(parentValue, newValue, merged_status) {
+window.addNode = function(parentValue, newValue, merged_status, textLine1, textLine2) {
     if (!newValue) {
         alert("Please enter a valid node value.");
         return;
@@ -257,7 +278,7 @@ window.addNode = function(parentValue, newValue, merged_status) {
     const parentNum = (parentValue && parentValue !== "None") ? parseInt(parentValue) : null;
     const newNum = parseInt(newValue);
 
-    if (window.tree.insert(parentNum, newNum, merged_status)) {
+    if (window.tree.insert(parentNum, newNum, merged_status, textLine1, textLine2)) {
         adjustCanvasSize();
         window.selectNode(newNum);
         drawTree();
@@ -267,15 +288,17 @@ window.addNode = function(parentValue, newValue, merged_status) {
 window.buildTreeAndSelectNode = function(conversation, queryId) {
     if (conversation.length !== 0) {
         conversation.forEach(conversation_unit => {
+            // Assuming you have a way to derive textLine1 and textLine2 from the conversation unit
+            const queryText = truncateString(conversation_unit.query_text) || "";  // Example: from conversation data
+            const aiResponse = truncateString(conversation_unit.ai_response) || "";  // Example: from conversation data
             if (conversation_unit.parent_query_ids.length == 1)
-            {
-                window.addNode(conversation_unit.parent_query_ids[0], conversation_unit.child_query_id, false);
-            }
-            else
-            {
-                window.addNode(conversation_unit.parent_query_ids[0], conversation_unit.child_query_id, true);
-                
-            }
+                {
+                    window.addNode(conversation_unit.parent_query_ids[0], conversation_unit.child_query_id, false, queryText, aiResponse);
+                }
+                else
+                {
+                    window.addNode(conversation_unit.parent_query_ids[0], conversation_unit.child_query_id, true, queryText, aiResponse);
+                }
         });
         if (queryId.length === 1) {
             window.selectNode(queryId[0]);
@@ -291,6 +314,7 @@ window.buildTreeAndSelectNode = function(conversation, queryId) {
         else console.log("No query ID provided.");
 
         drawTree(); // Find the newly added node
+        window.tree.adjustPositions();
     }
 }
 
@@ -315,12 +339,15 @@ function within(x, y) {
     const foundNode = window.tree.nodes.find(n => {
         const dx = x - n.x;
         const dy = y - n.y;
-        const isWithin = (dx * dx + dy * dy) <= (n.radius * n.radius);
+        const halfWidth = n.width / 2;
+        const halfHeight = n.height / 2;
+        const isWithin = Math.abs(dx) <= halfWidth && Math.abs(dy) <= halfHeight;
         console.log("Node:", n.value, "dx:", dx, "dy:", dy, "isWithin:", isWithin); // ADDED
         return isWithin;
     });
     return foundNode;
 }
+
 
 function multiSelectionNodes(value, treeInteraction) {
     const target = window.tree.findNode(parseInt(value,10));

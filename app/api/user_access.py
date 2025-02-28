@@ -67,7 +67,6 @@ def signing_up_user(
 
 @router.get("/me")
 def get_current_user(request: Request, user: User = Depends(get_current_user)):
-    print("request.cookies",request.cookies)
     return {
         "user_id": user.user_id,
         "username": user.username,

@@ -137,21 +137,35 @@ class ConversationManager(BaseService):
     
     def get_thread_conversation_history(self, thread_id: int):
         try:
-            query = select(QueryRelation.parent_query_id, QueryRelation.child_query_id).join(
+            query = select(
+                QueryRelation.parent_query_id, 
+                QueryRelation.child_query_id,
+                Query.query_text,
+                Query.ai_response
+            ).join(
                 Query, QueryRelation.child_query_id == Query.query_id
-            ).where(Query.thread_id == thread_id)
+            ).where(
+                Query.thread_id == thread_id
+            )
 
             results = self.db.execute(query).fetchall()
 
-            # Use defaultdict to group parent IDs by child ID
-            grouped_results = defaultdict(list)
-            for parent_id, child_id in results:
-                grouped_results[child_id].append(parent_id)
+            # Use defaultdict to group results by child ID
+            grouped_results = defaultdict(lambda: {"parent_query_ids": [], "query_text": "", "ai_response": ""})
+            for parent_id, child_id, query_text, ai_response in results:
+                grouped_results[child_id]["parent_query_ids"].append(parent_id)
+                grouped_results[child_id]["query_text"] = query_text
+                grouped_results[child_id]["ai_response"] = ai_response
 
             # Convert the grouped results to the desired format
             formatted_results = [
-                {"parent_query_ids": parent_ids, "child_query_id": child_id}
-                for child_id, parent_ids in grouped_results.items()
+                {
+                    "child_query_id": child_id,
+                    "parent_query_ids": data["parent_query_ids"],
+                    "query_text": data["query_text"],
+                    "ai_response": data["ai_response"]
+                }
+                for child_id, data in grouped_results.items()
             ]
 
             return formatted_results
