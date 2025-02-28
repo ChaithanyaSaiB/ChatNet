@@ -7,6 +7,18 @@ document.addEventListener('DOMContentLoaded', function() {
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
+    // Include Marked.js library (https://github.com/markedjs/marked)
+    window.renderMarkdown = function() {
+        const responseElements = document.querySelectorAll('.markdown-body');
+        responseElements.forEach(element => {
+            element.innerHTML = marked.parse(element.textContent);
+        });
+    }
+
+    // Call this function after the content is loaded/updated
+    renderMarkdown();
+
+
     function logout() {
 
         fetch('/logout', {

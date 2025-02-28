@@ -80,7 +80,7 @@ class Tree {
         this.nodes.forEach(node => {
             if (node.y > maxY) maxY = node.y;
         });
-        return maxY; // Extra padding
+        return maxY + 100; // Extra padding
     }
 
     detectCollisions() {
@@ -93,7 +93,9 @@ class Tree {
                 const dy = a.y - b.y;
     
                 // Use rectangular collision detection
-                if (Math.abs(dx) < (a.width + b.width) / 2 * 1.3 && Math.abs(dy) < (a.height + b.height) / 2 * 1.3) {
+                const collisionBuffer = 25; // Fixed pixel buffer
+                if (Math.abs(dx) < (a.width/2 + b.width/2 + collisionBuffer) && 
+                    Math.abs(dy) < (a.height/2 + b.height/2 + collisionBuffer)) {
                     collisions.push({ node1: a, node2: b });
                 }
             }
@@ -105,7 +107,7 @@ class Tree {
         collisions.forEach(collision => {
             const node1 = collision.node1;
             const node2 = collision.node2;
-            const shift = node1.radius * 3; // Increase the shift amount significantly
+            const shift = node1.radius * 2; // Increase the shift amount significantly
 
             // Determine direction to push apart
             let dx = node2.x - node1.x;
@@ -251,18 +253,18 @@ function drawNode(node, levelHeight, nodeSpacing) {
 function adjustCanvasSize() {
     const container = document.getElementById('tree-container');
     const canvas = document.getElementById('treeCanvas');
+    
+    // Set initial size to container's rendered size
+    canvas.width = container.clientWidth || window.innerWidth * 0.3;
+    canvas.height = container.clientHeight || window.innerHeight * 0.3;
+
+    // Now calculate tree dimensions
     const treeWidth = window.tree.getWidth();
     const treeHeight = window.tree.getHeight();
 
-    // Set minimum width to container width or tree width, whichever is larger
-    canvas.width = Math.max(treeWidth, container.clientWidth);
-    canvas.height = Math.max(treeHeight, container.clientHeight);
-
-    // Calculate the left padding to center the tree
-    //const leftPadding = Math.max(0, (container.clientWidth - treeWidth) / 2);
-
-    // Apply left padding to the canvas
-    //canvas.style.paddingLeft = `${leftPadding}px`;
+    // Expand canvas if needed
+    canvas.width = Math.max(treeWidth, canvas.width);
+    canvas.height = Math.max(treeHeight, canvas.height);
 
     drawTree();
 }
@@ -342,7 +344,7 @@ function within(x, y) {
         const halfWidth = n.width / 2;
         const halfHeight = n.height / 2;
         const isWithin = Math.abs(dx) <= halfWidth && Math.abs(dy) <= halfHeight;
-        console.log("Node:", n.value, "dx:", dx, "dy:", dy, "isWithin:", isWithin); // ADDED
+        console.log("Node:", n.value, "x:", n.x, "y:", n.y, "clickX:", x, "clickY:", y, "isWithin:", isWithin); // ADDED MORE DETAIL
         return isWithin;
     });
     return foundNode;
@@ -372,8 +374,8 @@ function down(e) {
     const rect = canvas.getBoundingClientRect();
     const offsetX = canvas.offsetLeft;  // Or a fixed offset value if needed
     const offsetY = canvas.offsetTop;  // Or a fixed offset value if needed
-    const x = e.clientX - rect.left - offsetX;
-    const y = e.clientY - rect.top - offsetY;
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top;
     let target = within(x, y);
     if (target) {
         console.log("Node found:", target.value);

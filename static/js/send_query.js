@@ -26,30 +26,54 @@ function sendQuery() {
     const queryIdsList = queryIdsString.split(', ').map(Number);
     document.getElementById('user-input').value = '';
 
-    const chatArea = document.getElementById('chat-area');
-    chatArea.innerHTML += `
-            <div class="query">
-                <h2 id="query-title">${userInput}</h2>
+    const newconversationUnit = document.createElement('div');
+    newconversationUnit.className = 'conversation-unit';
+    newconversationUnit.innerHTML += `
+            <div class="query-container">
+                <div class="query">
+                    <h2 id="query-title">${userInput}</h2>
+                </div>
             </div>
         `;
+        document.querySelector('#chat-area').appendChild(newconversationUnit);
 
     fetch(buildDynamicURL(threadId, queryIdsList, false), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query_text: { query: userInput } })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (response.status === 401) {
+            throw new Error('Unauthorized: Please log in again.');
+        }
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
         console.log(data);
-        const chatArea = document.getElementById('chat-area');
         const lastConversationUnit = data.conversation_history[data.conversation_history.length - 1];
         document.querySelector('input[name="query_id"]').value = lastConversationUnit.query_id;
-        chatArea.innerHTML += `
-            <div class="response">
-                <h3 class="response-title">Answer</h3>
-                <p id="response-text">${lastConversationUnit["response"]}</p>
+        const allConversationUnits = document.getElementsByClassName('conversation-unit');
+        const lastConversationUnitElement = allConversationUnits[allConversationUnits.length - 1];
+        lastConversationUnitElement.innerHTML += `
+            <div class="response-container">
+                <div class="response">
+                    <div id="response-text" class="markdown-body">${lastConversationUnit.response}</div>
+                </div>
+                <div class="sources">
+                    ${lastConversationUnit.search_results && lastConversationUnit.search_results.length > 0 ? 
+                        `<h5 class="sources-title">Sources</h5>
+                        ${lastConversationUnit.search_results.map(source => 
+                            `<a href="#" class="source-item">${source}</a>`
+                        ).join('')}`
+                    : ''}
+                </div>
             </div>
         `;
+
+        renderMarkdown();
         console.log("latest_quest_id",lastConversationUnit.query_id);
         history.pushState(null, '', `/thread?thread_id=${threadId}&query_id=${lastConversationUnit["query_id"]}`);
         console.log(lastConversationUnit.parent_query_ids);
@@ -62,5 +86,24 @@ function sendQuery() {
             window.addNode(lastConversationUnit.parent_query_ids[0], lastConversationUnit.query_id, false, truncateString(lastConversationUnit.query), truncateString(lastConversationUnit.response));
         }
     })
-    .catch((error) => console.error('Error:', error));
+    .catch((error) => {
+        console.error('Error:', error);
+
+        // Display error message to user
+        let chatPane = document.querySelector('.chat-pane');
+        chatPane.innerHTML = `
+            <div class="error-message">
+                <h2>An error occurred</h2>
+                <p>${error.message}</p>
+                <button onclick="location.reload()">Try Again</button>
+            </div>
+        `;
+        
+        // If it's an authentication error, you might want to redirect to login page
+        if (error.message.includes('Unauthorized')) {
+            setTimeout(() => {
+                window.location.href = '/login'; // Adjust this URL as needed
+            }, 3000); // Redirect after 3 seconds
+        }
+    });
 }

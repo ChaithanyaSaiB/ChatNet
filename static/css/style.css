@@ -121,6 +121,11 @@ body {
     list-style: none;
 }
 
+.disabled {
+    pointer-events: none;
+    cursor: default;
+  }
+
 /* Login Bar (Now Covers Grid 2 & 3) */
 .login-bar {
     grid-column: span 2;
@@ -157,6 +162,8 @@ body {
 
 /* Chat Area - Restore Scrolling */
 #chat-area {
+    display: flex;
+    flex-direction: column;
     flex-grow: 1;
     overflow-y: auto; /* Restore scrolling */
     padding: 20px;
@@ -177,6 +184,24 @@ body {
     border-radius: 4px;
 }
 
+/*  Conversation Unit Styling */
+.conversation-unit {
+    display: flex;
+    flex-direction: column; 
+    margin-bottom: 10px;
+}
+
+/* Query Container Styles */
+.query-container {
+    background-color: #e0f7fa; /* Light Cyan */
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 10px;
+    align-self: flex-start;
+    width: fit-content;
+    max-width: 95%;
+}
+
 /* Spacing for elements inside Chat Area */
 .query, .sources, .response, .suggested-queries {
     margin-bottom: 20px;
@@ -188,6 +213,31 @@ body {
     font-weight: bold;
     color: #2c3e50; /* Dark Blue */
 }
+
+.query-container .query #query-title {
+    text-align: justify; /* Added text justification */
+    font-size: 16px;
+    font-weight: bold;
+    color: #006064; /* Dark Cyan */
+    line-height: 1.5; /* Added line spacing */
+    word-wrap: break-word; /* Ensures long words don't overflow */
+}
+
+/* Response Container Styles */
+.response-container {
+    background-color: #DCF8C6; /* Light Green */
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 10px;
+    align-self: flex-end;
+    width: fit-content;
+    max-width: 95%;
+}
+
+.conversation-unit:first-child .response-container {
+    margin-right: 0; /* Or any specific value to reset padding/margin */
+}
+
 
 /* Sources Section */
 .sources-title {
@@ -207,18 +257,37 @@ body {
     text-decoration: underline;
 }
 
+.sources, .suggested-queries {
+    margin-top: 10px;
+    padding-left: 15px;
+}
+
+.sources-title, .suggested-queries-title {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.source-item, .suggested-query-item {
+    font-size: 14px;
+}
+
 /* Response Section */
-.response-title {
+/* .response-title {
     font-size: 18px;
     font-weight: bold;
-    color: #e67e22; /* Orange */
-}
+    color: #e67e22; 
+} */
 
 #response-text {
     font-size: 16px;
     line-height: 1.5;
     color: #333;
     text-align: justify;
+}
+
+.response-container .response #response-text {
+    font-size: 16px;
+    color: #000;
 }
 
 /* Suggested Queries */

@@ -1,0 +1,182 @@
+/* General Styles */
+.markdown-body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    padding: 20px;
+}
+
+/* Headers */
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+    font-weight: bold;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    margin-top: 24px;
+}
+
+.markdown-body h1 {
+    font-size: 2em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.3em;
+}
+
+.markdown-body h2 {
+    font-size: 1.6em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.3em;
+}
+
+.markdown-body h3 {
+    font-size: 1.4em;
+}
+
+.markdown-body h4 {
+    font-size: 1.2em;
+}
+
+.markdown-body h5 {
+    font-size: 1em;
+}
+
+.markdown-body h6 {
+    font-size: 0.9em;
+    color: #777;
+}
+
+/* Paragraphs */
+.markdown-body p {
+    margin-bottom: 16px;
+}
+
+/* markdown.css */
+
+.markdown-body ul,
+.markdown-body ol {
+    padding-left: 25px; /* Adjust as needed */
+    margin-bottom: 16px;
+    list-style-position: outside;
+}
+
+.markdown-body li {
+    margin-bottom: 8px;
+}
+
+.markdown-body ul li, /* More Specific */
+.markdown-body ol li { /* More Specific */
+    margin-left: 0; /* Reset any default margin on list items */
+    padding-left: 0; /* Reset any default padding on list items */
+}
+
+.markdown-body ul {
+    list-style-type: disc; /* Or 'circle', 'square', or 'none' */
+}
+
+.markdown-body ol {
+    list-style-type: decimal; /* Or 'upper-roman', 'lower-alpha', etc. */
+}
+
+.markdown-body ul ul, /* Nested Unordered Lists */
+.markdown-body ol ol, /* Nested Ordered Lists */
+.markdown-body ul ol, /* Unordered List inside Ordered List */
+.markdown-body ol ul { /* Ordered List inside Unordered List */
+    padding-left: 40px; /* Adjust for nested indentation */
+}
+
+/* markdown.css */
+
+.markdown-body ul li::marker,
+.markdown-body ol li::marker {
+    text-indent: 0; /* Reset text-indent */
+    text-align: left; /* Ensure left alignment */
+    display: inline-block; /* Treat marker as inline element */
+    width: 1.5em; /* Adjust width as needed */
+    margin-left: -1.5em; /* Adjust margin to align properly */
+}
+
+
+
+/* Links */
+.markdown-body a {
+    color: #0366d6;
+    text-decoration: none;
+}
+
+.markdown-body a:hover {
+    text-decoration: underline;
+}
+
+/* Blockquotes */
+.markdown-body blockquote {
+    margin: 16px 0;
+    padding: 0 15px;
+    color: #777;
+    border-left: 4px solid #ddd;
+}
+
+/* Code */
+.markdown-body code {
+    padding: 0.2em 0.4em;
+    margin: 0;
+    font-size: 85%;
+    background-color: rgba(27, 31, 35, 0.05);
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+.markdown-body pre {
+    margin-bottom: 16px;
+    padding: 16px;
+    overflow: auto;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: #f6f8fa;
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+.markdown-body pre code {
+    display: inline;
+    padding: 0;
+    margin: 0;
+    font-size: 100%;
+    line-height: inherit;
+    background-color: transparent;
+    border-radius: 0;
+}
+
+/* Tables */
+.markdown-body table {
+    width: 100%;
+    margin-bottom: 16px;
+    border-collapse: collapse;
+}
+
+.markdown-body th {
+    font-weight: bold;
+    padding: 6px 13px;
+    border: 1px solid #ddd;
+}
+
+.markdown-body td {
+    padding: 6px 13px;
+    border: 1px solid #ddd;
+}
+
+.markdown-body tr {
+    background-color: #fff;
+    border-top: 1px solid #ccc;
+}
+
+.markdown-body tr:nth-child(2n) {
+    background-color: #f8f8f8;
+}
+
+/* Images */
+.markdown-body img {
+    max-width: 100%;
+}

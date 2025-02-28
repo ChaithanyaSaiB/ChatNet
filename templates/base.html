@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChatNet</title>
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="static/css/markdown.css">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -16,7 +18,7 @@
             <div class="menu">
                 <a href="/" class="new-net-button">New Net</a>
                 <a href="/" class="menu-item">Home</a>
-                <a href="about.html" class="menu-item">Library</a>
+                <a href="about.html" class="menu-item disabled">Library</a>
                 <ul class="thread-list">
                     <!-- Threads will be loaded dynamically -->
                 </ul>

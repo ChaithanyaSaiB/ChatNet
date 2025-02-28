@@ -1,11 +1,11 @@
-function setCookie(name, value, minutes) {
-    const date = new Date();
-    date.setTime(date.getTime() + (minutes * 60 * 1000)); // Add expiration time in minutes
-    const expires = "expires=" + date.toUTCString(); // Convert to UTC string format
+// function setCookie(name, value, minutes) {
+//     const date = new Date();
+//     date.setTime(date.getTime() + (minutes * 60 * 1000)); // Add expiration time in minutes
+//     const expires = "expires=" + date.toUTCString(); // Convert to UTC string format
 
-    // Set the cookie
-    document.cookie = `${name}=${value};${expires};path=/`;
-}
+//     // Set the cookie
+//     document.cookie = `${name}=${value};${expires};path=/`;
+// }
 
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
@@ -43,7 +43,6 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(data => {
             // setCookie("access_token", data.access_token, 30);  // Store token
-            alert(data.message);  // Show the success message
             window.location.href = "/";  // Redirect to dashboard
         })
         .catch(error => {

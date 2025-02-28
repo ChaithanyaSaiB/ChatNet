@@ -51,10 +51,10 @@ async def api_error_handler(request: Request, exc: APIError):
         content={"error": exc.message}
     )
 
-# @app.exception_handler(HTTPException)
-# async def http_exception_handler(request: Request, exc: HTTPException):
-#     return templates.TemplateResponse(
-#         "error.html",
-#         {"request": request, "status_code": exc.status_code, "detail": exc.detail},
-#         status_code=exc.status_code
-#     )
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    return templates.TemplateResponse(
+        "error.html",
+        {"request": request, "status_code": exc.status_code, "detail": exc.detail},
+        status_code=exc.status_code
+    )

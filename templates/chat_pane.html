@@ -2,27 +2,28 @@
 <input type="hidden" name="query_id" value="{{ query_id|join(', ') }}">
 <div id="chat-area">
     {% for conversation_unit in conversation_history %}
-        <div class="query">
-            <h2 id="query-title">{{ conversation_unit["query"] }}</h2>
-            <div class="query_id" data-value="{{ conversation_unit['query_id'] }}"></div>
-            <div class="parent_query_id" data-value="{% if conversation_unit['parent_query_ids'] is not none %}{{ conversation_unit['parent_query_ids']|string }}{% else %}none{% endif %}"></div>
-        </div>
-        <div class="sources">
-            {% if conversation_unit["search_results"] != [] %}
-                <h5 class="sources-title">Sources</h5>
-            {% endif %}
-            {% for source in conversation_unit["search_results"] %}
-                <a href="#" class="source-item">{{ source }}</a>
-            {% endfor %}
-        </div>
-        <div class="response">
-            <h3 class="response-title">Answer</h3>
-            <p id="response-text">{{ conversation_unit["response"] }}</p>
-        </div>
-        <div class="suggested-queries">
-            <h5 class="suggested-queries-title">Suggested Queries</h5>
-            <a href="#" class="suggested-query-item"></a>
-            <a href="#" class="suggested-query-item"></a>
+        <div class="conversation-unit">
+            <div class="query-container">
+                <div class="query">
+                    <h2 id="query-title">{{ conversation_unit["query"] }}</h2>
+                    <div class="query_id" data-value="{{ conversation_unit['query_id'] }}"></div>
+                    <div class="parent_query_id" data-value="{% if conversation_unit['parent_query_ids'] is not none %}{{ conversation_unit['parent_query_ids']|string }}{% else %}none{% endif %}"></div>
+                </div>
+            </div>
+
+            <div class="response-container">
+                <div class="response">
+                    <div id="response-text" class="markdown-body">{{ conversation_unit["response"] }}</div>
+                </div>
+                <div class="sources">
+                    {% if conversation_unit["search_results"] != [] %}
+                        <h5 class="sources-title">Sources</h5>
+                    {% endif %}
+                    {% for source in conversation_unit["search_results"] %}
+                        <a href="#" class="source-item">{{ source }}</a>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     {% endfor %}
 </div>

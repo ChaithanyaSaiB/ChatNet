@@ -26,7 +26,15 @@ function selectedNodeChanged(queryId) {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (response.status === 401) {
+            throw new Error('Unauthorized: Please log in again.');
+        }
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
         let chatPane = document.querySelector('.chat-pane');
         chatPane.innerHTML = data.html;
@@ -37,6 +45,21 @@ function selectedNodeChanged(queryId) {
     })
     .catch(error => {
         console.error('Error:', error);
+
+        // Display error message to user
+        let chatPane = document.querySelector('.chat-pane');
+        chatPane.innerHTML = `
+            <div class="error-message">
+                <h2>An error occurred</h2>
+                <p>${error.message}</p>
+                <button onclick="location.reload()">Try Again</button>
+            </div>
+        `;
+        
+        // If it's an authentication error, you might want to redirect to login page
+        if (error.message.includes('Unauthorized')) {
+            window.location.href = '/login'; // Adjust this URL as needed
+        }
     });
 }
 

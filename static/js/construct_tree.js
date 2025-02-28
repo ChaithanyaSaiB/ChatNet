@@ -16,17 +16,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const queryIdsList = queryIdsString.split(', ').map(Number);
     
     console.log("construct tree working!");
-    fetch('/thread_conversation_history', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({'thread_id': threadId})
-    })
-    .then(response => response.json())
-    .then(conversation => {
-        window.buildTreeAndSelectNode(conversation, queryIdsList);
-    })
-    .catch(error => console.error('Error loading thread conversation history:', error));
-
+    setTimeout(() => {
+        fetch('/thread_conversation_history', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({'thread_id': threadId})
+        })
+        .then(response => response.json())
+        .then(conversation => {
+            window.buildTreeAndSelectNode(conversation, queryIdsList);
+            setTimeout(drawTree, 100);
+        })
+        .catch(error => console.error('Error loading thread conversation history:', error));
+    }, 50);
     //construct_tree()
 
 });

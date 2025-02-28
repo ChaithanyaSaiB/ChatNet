@@ -7,9 +7,9 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch('/new_thread', {
             method: 'POST',
             headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getCookie('access_token')}`
+                'Content-Type': 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify({query: userInput}),
             redirect: 'follow'
         })
