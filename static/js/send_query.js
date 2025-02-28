@@ -35,18 +35,12 @@ function sendQuery() {
 
     fetch(buildDynamicURL(threadId, queryIdsList, false), {
         method: 'POST',
-        headers: { 
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-            //thread_id: threadId,
-            //query_id: queryId,
-            query: userInput
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query_text: { query: userInput } })
     })
     .then(response => response.json())
     .then(data => {
+        console.log(data);
         const chatArea = document.getElementById('chat-area');
         const lastConversationUnit = data.conversation_history[data.conversation_history.length - 1];
         document.querySelector('input[name="query_id"]').value = lastConversationUnit.query_id;
