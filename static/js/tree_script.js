@@ -213,6 +213,48 @@ function drawTree() {
     drawNode(window.tree.root, levelHeight, nodeSpacing);
 }
 
+function wrapText(context, text, maxWidth) {
+    const words = text.split(' ');
+    const lines = [];
+    let currentLine = '';
+
+    for (let i = 0; i < words.length; i++) {
+        const word = words[i];
+        const testLine = currentLine ? `${currentLine} ${word}` : word;
+        const metrics = context.measureText(testLine);
+        const testWidth = metrics.width;
+
+        if (testWidth > maxWidth) {
+            if (currentLine) {
+                lines.push(currentLine);
+                currentLine = word;
+            } else {
+                // If a single word is too long, split it
+                let partialWord = '';
+                for (let j = 0; j < word.length; j++) {
+                    const testChar = partialWord + word[j];
+                    if (context.measureText(testChar).width <= maxWidth) {
+                        partialWord = testChar;
+                    } else {
+                        lines.push(partialWord);
+                        partialWord = word[j];
+                    }
+                }
+                currentLine = partialWord;
+            }
+        } else {
+            currentLine = testLine;
+        }
+    }
+
+    if (currentLine) {
+        lines.push(currentLine);
+    }
+
+    return lines;
+}
+
+
 function drawNode(node, levelHeight, nodeSpacing) {
     if (!node) return;
 
@@ -241,10 +283,38 @@ function drawNode(node, levelHeight, nodeSpacing) {
 
     // Draw text lines
     ctx.fillStyle = 'black';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(node.queryText, node.x, node.y - 10); // Adjust vertical position for the first line
-    ctx.fillText(node.aiResponse, node.x, node.y + 10); // Adjust vertical position for the second line
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    const maxWidth = node.width - 5;
+    const lineHeight = 20;
+    const x = node.x - node.width / 2 + 5;
+    let y = node.y - node.height / 2 + 5;
+
+    const lines = wrapText(ctx, node.queryText, maxWidth);
+  
+    for (let i = 0; i < lines.length; i++) {
+        if (y + lineHeight > node.y + node.height / 2) {
+            // We're at the last visible line
+            if (i < lines.length - 1 || ctx.measureText(lines[i]).width > maxWidth) {
+                // Truncate only if there are more lines or if this line is too long
+                let truncatedLine = lines[i];
+                while (ctx.measureText(truncatedLine + '...').width > maxWidth && truncatedLine.length > 0) {
+                    truncatedLine = truncatedLine.slice(0, -1);
+                }
+                ctx.fillText(truncatedLine + '...', x, y);
+            } else {
+                // This is the last line and it fits completely
+                ctx.fillText(lines[i], x, y);
+            }
+            break;
+        }
+        ctx.fillText(lines[i], x, y);
+        y += lineHeight;
+    }
+
+
+    // Set cursor style to pointer when hovering over a node
+    canvas.style.cursor = (isMouseOverNode(node) ? 'pointer' : 'default');
 
     // Recursively draw children
     node.children.forEach(child => drawNode(child, levelHeight, nodeSpacing));
@@ -291,8 +361,8 @@ window.buildTreeAndSelectNode = function(conversation, queryId) {
     if (conversation.length !== 0) {
         conversation.forEach(conversation_unit => {
             // Assuming you have a way to derive textLine1 and textLine2 from the conversation unit
-            const queryText = truncateString(conversation_unit.query_text) || "";  // Example: from conversation data
-            const aiResponse = truncateString(conversation_unit.ai_response) || "";  // Example: from conversation data
+            const queryText = conversation_unit.query_text || "";  // Example: from conversation data
+            const aiResponse = conversation_unit.ai_response || "";  // Example: from conversation data
             if (conversation_unit.parent_query_ids.length == 1)
                 {
                     window.addNode(conversation_unit.parent_query_ids[0], conversation_unit.child_query_id, false, queryText, aiResponse);
@@ -405,3 +475,63 @@ function up(e) {
 
 canvas.addEventListener('mousedown', down);
 canvas.addEventListener('mouseup', up);
+
+function isMouseOverNode(node) {
+    const rect = canvas.getBoundingClientRect();
+    const offsetX = canvas.offsetLeft;  // Or a fixed offset value if needed
+    const offsetY = canvas.offsetTop;  // Or a fixed offset value if needed
+    const x = mouseX - rect.left
+    const y = mouseY - rect.top;
+    const dx = x - node.x;
+    const dy = y - node.y;
+    const halfWidth = node.width / 2;
+    const halfHeight = node.height / 2;
+    return Math.abs(dx) <= halfWidth && Math.abs(dy) <= halfHeight;
+}
+
+let mouseX = 0;
+let mouseY = 0;
+
+function getMousePos(canvas, evt) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+    };
+}
+
+canvas.addEventListener('mousemove', function(evt) {
+    const tooltip = document.getElementById('tooltip');
+    const mousePos = getMousePos(canvas, evt);
+    mouseX = mousePos.x;
+    mouseY = mousePos.y;
+
+    let hoveredNode = null;
+
+    for (let i = 0; i < window.tree.nodes.length; i++) {
+        const node = window.tree.nodes[i];
+        if (isMouseOverNode(node)) {
+            hoveredNode = node;
+            break; // Stop iterating once a node is found
+        }
+    }
+
+    if (hoveredNode) {
+        // Show tooltip and position it
+        tooltip.textContent = hoveredNode.queryText;
+        tooltip.style.left = (evt.clientX + 10) + 'px'; // Position near mouse
+        tooltip.style.top = (evt.clientY + 10) + 'px';
+        tooltip.style.display = 'block'; // Show the tooltip
+    } else {
+        // Hide the tooltip
+        tooltip.style.display = 'none';
+    }
+    drawTree();
+}, false);
+
+// Add mouse leave event to hide tooltip
+canvas.addEventListener('mouseleave', function() {
+    const tooltip = document.getElementById('tooltip');
+    tooltip.style.display = 'none';
+    drawTree();
+});

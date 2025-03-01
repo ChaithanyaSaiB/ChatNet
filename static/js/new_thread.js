@@ -14,22 +14,35 @@ document.addEventListener('DOMContentLoaded', function() {
             redirect: 'follow'
         })
         .then(response => {
-            if (response.redirected) {
+            if (response.status === 401) {
+                throw new Error('Unauthorized: Please log in again.');
+            }
+            else if (response.redirected) {
                 // Redirect properly
                 window.location.href = response.url;
-            } 
+            }
             else if (!response.ok) {
                 return response.json().then(err => { throw new Error(err.detail || "Failed to create new thread."); });
             }
         })
         .catch(error => {
-            //console.error('Error:', error);
-            if (error instanceof Error) {
-                console.error('Error details:', error.message, error.stack);
-            } else {
-                console.error('Unexpected error:', JSON.stringify(error, null, 2));
+            console.error('Error:', error);
+
+            // Display error message to user
+            let chatPane = document.querySelector('.chat-pane');
+            chatPane.innerHTML = `
+                <div class="error-message">
+                    <h2>An error occurred</h2>
+                    <p>${error.message}</p>
+                </div>
+            `;
+            
+            // If it's an authentication error, you might want to redirect to login page
+            if (error.message.includes('Unauthorized')) {
+                setTimeout(() => {
+                    window.location.href = '/login'; // Adjust this URL as needed
+                }, 3000); // Redirect after 3 seconds
             }
-            alert('Failed to create new thread. Please try again.');
         });
         
     }

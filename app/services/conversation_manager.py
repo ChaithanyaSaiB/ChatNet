@@ -18,6 +18,7 @@ from sqlalchemy.sql import union_all
 from app.utils.message_conversion import get_langchain_messages
 import uuid
 from sqlalchemy.dialects.postgresql import array
+from app.utils.url_extractor import extract_urls
 
 class ConversationManager(BaseService):
     def __init__(self, db: Session):
@@ -42,11 +43,20 @@ class ConversationManager(BaseService):
             messages = get_langchain_messages(conversation_history)
 
             agent_response = langgraph_agent.invoke({"messages": messages})
+            print('&'*15)
+            print(agent_response)
+            print('^'*15)
+            extracted_urls = extract_urls(agent_response)
+            print(extracted_urls)
             response_content = agent_response['messages'][-1].content
 
             query = Query(thread_id=thread_id, user_id=user_id, query_text=query_content, ai_response=response_content)
             self.db.add(query)
             self.db.flush()  # This assigns an ID to the query without committing the transaction
+
+            for url in extracted_urls:
+                search_result = SearchResult(query_id=query.query_id, url=url)
+                self.db.add(search_result)
 
             # Always add a query relation
             for parent_query_id in parent_query_ids:
@@ -58,7 +68,7 @@ class ConversationManager(BaseService):
                 "parent_query_ids": parent_query_ids,
                 "query": query_content,
                 "response": response_content,
-                "search_results": []  # Add this if you want to maintain consistency with your previous format
+                "search_results": extracted_urls 
             }
 
             self.db.commit()
@@ -66,8 +76,6 @@ class ConversationManager(BaseService):
 
         except Exception as e:
             # Delete the last entry in the thread table
-            self.db.query(Thread).filter(Thread.thread_id == thread_id).delete()
-            self.db.rollback()
             self.handle_error(e)
 
     def get_latest_query_id(self, thread_id: int):

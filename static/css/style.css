@@ -197,7 +197,7 @@ body {
     border-radius: 15px;
     padding: 15px;
     margin-bottom: 10px;
-    align-self: flex-start;
+    align-self: flex-end;
     width: fit-content;
     max-width: 95%;
 }
@@ -229,7 +229,7 @@ body {
     border-radius: 15px;
     padding: 15px;
     margin-bottom: 10px;
-    align-self: flex-end;
+    align-self: flex-start;
     width: fit-content;
     max-width: 95%;
 }
@@ -271,13 +271,6 @@ body {
     font-size: 14px;
 }
 
-/* Response Section */
-/* .response-title {
-    font-size: 18px;
-    font-weight: bold;
-    color: #e67e22; 
-} */
-
 #response-text {
     font-size: 16px;
     line-height: 1.5;
@@ -308,7 +301,7 @@ body {
     text-decoration: underline;
 }
 
-/* ðŸŒŸ 4. Remove Scrollbar & Add Gradient Fade */
+/* 4. Remove Scrollbar & Add Gradient Fade */
 .chat-area {
     position: relative;
     overflow-y: auto; /* Ensure scrolling is restored */
