@@ -42,6 +42,8 @@ function selectedNodeChanged(queryId) {
         // Update the URL to reflect the new state without reloading the page
         //history.pushState(null, '', `/thread?thread_id=${data.thread_id}&query_id=${data.query_id}`);
         history.pushState(null, '', buildDynamicURL(data.thread_id, data.query_id, false));
+        window.renderMarkdown();
+        window.scrollToQuery();
     })
     .catch(error => {
         console.error('Error:', error);

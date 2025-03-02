@@ -7,6 +7,65 @@ document.addEventListener('DOMContentLoaded', function() {
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
+    const chatInput = document.getElementById('user-input');
+    const sendButton = document.querySelector('#send-button');
+
+    chatInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            sendButton.click();
+        }
+    });
+
+    // function scrollToBottom() {
+    //     const chatArea = document.getElementById('chat-area');
+    //     chatArea.scrollTo({
+    //       top: chatArea.scrollHeight,
+    //       behavior: 'smooth'
+    //     });
+    // }
+      
+    // scrollToBottom();    
+    // const lastElement = document.body.lastElementChild;
+    // lastElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+    window.scrollToQuery = function() {
+        const chatArea = document.getElementById('chat-area');
+        // const targetQuery = document.querySelector(`.query .query_id[data-value="${queryId}"]`).closest('.query');
+        const queries = document.querySelectorAll('.query');
+        const targetQuery = queries[queries.length - 1];
+
+        if (!chatArea || !targetQuery) return;
+      
+        // Calculate the height of the chat area
+        const chatAreaHeight = chatArea.clientHeight;
+        
+        // Get the position of the target query relative to the chat area
+        const targetRect = targetQuery.getBoundingClientRect();
+        const chatAreaRect = chatArea.getBoundingClientRect();
+        const relativeTop = targetRect.top - chatAreaRect.top;
+      
+        // Calculate the required scroll position
+        let newScrollTop = chatArea.scrollTop + relativeTop;
+      
+        // Check if we need to add extra space at the bottom
+        const remainingSpace = chatAreaHeight - targetRect.height;
+        if (remainingSpace > 0) {
+          const extraSpace = document.createElement('div');
+          extraSpace.style.height = `${remainingSpace}px`;
+          chatArea.appendChild(extraSpace);
+        }
+      
+        // Scroll to the target query
+        chatArea.scrollTop = newScrollTop;
+      
+        // Optional: Smooth scroll animation
+        // chatArea.scrollTo({
+        //   top: newScrollTop,
+        //   behavior: 'smooth'
+        // });
+    }
+
     // Include Marked.js library (https://github.com/markedjs/marked)
     window.renderMarkdown = function() {
         const responseElements = document.querySelectorAll('.markdown-body');
@@ -16,6 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Call this function after the content is loaded/updated
+    scrollToQuery();
     renderMarkdown();
 
 
