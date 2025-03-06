@@ -10,13 +10,12 @@ class ThreadManager(BaseService):
     def __init__(self, db: Session):
         super().__init__(db)
 
-    def list_threads(self, user_id: int, limit: int = 5, offset: int = 0) -> List[Optional[Thread]]:
+    def list_threads(self, user_id: int, offset: int = 0) -> List[Optional[Thread]]:
         try:
             threads = (
                 self.db.query(Thread)
                 .filter(Thread.user_id == user_id)
                 .order_by(Thread.created_at.desc())
-                .limit(limit)
                 .offset(offset)
                 .all()
             )

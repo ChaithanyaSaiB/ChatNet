@@ -57,22 +57,29 @@ def get_thread(
     else:
         conversation_history = conversation_manager.get_multiple_query_conversation_history(query_ids=query_id, just_query_ids=[])
         if json_response_format:
+            query_id_copy = query_id.copy()
+            print("conversation history",conversation_history)
+            for conversation_unit in conversation_history:
+                print(conversation_unit["query_id"])
+                print(conversation_unit["query"])
+                print(conversation_unit["parent_queries"])
+                print("")
             html_content = templates.get_template("chat_pane.html").render(
                 request=request,
                 thread_id=thread_id,
                 query_id=query_id,
                 conversation_history=conversation_history
             )
-
+            
             # Return JSON response
             return JSONResponse(content={
                 "html": html_content,
                 "thread_id": thread_id,
-                "query_id": query_id
+                "query_id": query_id_copy
             })
         else:
             return templates.TemplateResponse(
-                "continued_thread.html", 
+                "continued_thread.html",
                 {
                     "request": request,
                     "thread_id": thread_id,
@@ -87,20 +94,26 @@ async def post_thread(
     query_text: QueryText,
     thread_id: int = fastapi_query(..., description="The ID of the thread"),
     query_id: Optional[List[int]] = fastapi_query(None, description="The ID of the query (optional)"),
+    just_query_id: Optional[List[int]] = fastapi_query([], description="The IDs of queries that need to be skipped for history (optional)"),
     conversation_manager: ConversationManager = Depends(get_conversation_manager),
     user: User = Depends(access_check)
 ):
+    print("ustquery id is",just_query_id)
     #thread_continuation = await request.json()
     conversation_history = conversation_manager.get_multiple_query_conversation_history(
         query_ids=query_id, 
-        just_query_ids=[]
+        just_query_ids=just_query_id
     )
+    print("query id is",query_id)
+    print("justqueryids are", just_query_id)
+    print(conversation_history)
     updated_conversation_history = conversation_manager.create_query_with_response(
         thread_id=thread_id,
         user_id=user.user_id,
         query_content=query_text.query,
         conversation_history=conversation_history,
-        parent_query_ids=query_id
+        parent_query_ids=query_id,
+        history_not_included = just_query_id
     )
     return JSONResponse(content={
         "thread_id": thread_id,

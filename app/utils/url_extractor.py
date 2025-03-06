@@ -12,6 +12,8 @@ def extract_urls(messages):
         if isinstance(message, ToolMessage):
             content = message.content
             url_pattern = r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
-            urls = re.findall(url_pattern, content)
+            
+            # Find all URLs in the content and extend the list
+            urls.extend(re.findall(url_pattern, content))
 
-    return list(urls)  # Reverse the URLs to maintain chronological order
+    return list(set(urls))  # Remove duplicates by converting to a set and back to a list

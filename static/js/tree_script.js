@@ -427,7 +427,7 @@ function multiSelectionNodes(value, treeInteraction) {
     if (index === -1) {
         selection.push(target);
         target.selected = true;
-        if(treeInteraction) multipleSelectionChanged(target.value);
+        if(treeInteraction) multipleSelectionChanged(target.value, target.merged);
         console.log("Added to selection:", target.value);
     }
     else if (index == 0) alert("Cannot unselected main merge node!");

@@ -1,31 +1,173 @@
 <input type="hidden" name="thread_id" value="{{ thread_id }}">
 <input type="hidden" name="query_id" value="{{ query_id|join(', ') }}">
-<div id="chat-area">
-    {% for conversation_unit in conversation_history %}
-        <div class="conversation-unit">
-            <div class="query-container">
-                <div class="query">
-                    <h2 id="query-title">{{ conversation_unit["query"] }}</h2>
-                    <div class="query_id" data-value="{{ conversation_unit['query_id'] }}"></div>
-                    <div class="parent_query_id" data-value="{% if conversation_unit['parent_query_ids'] is not none %}{{ conversation_unit['parent_query_ids']|string }}{% else %}none{% endif %}"></div>
-                </div>
-            </div>
 
-            <div class="response-container">
-                <div class="response">
-                    <div id="response-text" class="markdown-body">{{ conversation_unit["response"] }}</div>
+
+
+{% set query_ids = (query_id if query_id is iterable and query_id is not string else [query_id]) %}
+{% set groups = [] %}
+
+{% set ns = namespace(
+    current_group=[],
+    target_index=0
+) %}
+
+{% for conversation_unit in conversation_history %}
+    {% set _ = ns.current_group.append(conversation_unit) %}
+    
+    {# Only check if we still have targets to find #}
+    {% if ns.target_index < query_ids|length %}
+        {% set current_target = query_ids[ns.target_index] %}
+        
+        {% if conversation_unit.query_id == current_target %}
+            {# Store temp index to modify namespace #}
+            {% set new_index = ns.target_index + 1 %}
+            {% set ns.target_index = new_index %}
+            
+            {# Finalize current group #}
+            {% set _ = groups.append(ns.current_group) %}
+            {% set ns.current_group = [] %}
+        {% endif %}
+    {% endif %}
+{% endfor %}
+
+{# Add any remaining units #}
+{% if ns.current_group %}
+    {% set _ = groups.append(ns.current_group) %}
+{% endif %}
+
+
+
+<input type="hidden" name="just_query_ids" value="">
+<div id="chat-area">
+    <p>{{conversation_history}}</p>
+    <p>{{groups|length}}</p>
+    {% if groups|length > 1 %}
+        {% for group in groups %}
+        <p>{{group}}</p>
+            <div class="conversation-group">
+                {% if group|length > 1 %}
+                <div class="sticky-controls">
+                    <div class="group-toggle">
+                        <label class="switch">
+                            <input type="checkbox" class="select-group" data-group-index="{{ loop.index0 }}" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="toggle-label">Include History</span>
+                    </div>
+                    
+                    <div class="expand-toggle">
+                        <a href="#" class="expand-button" data-group-index="{{ loop.index0 }}" style="display: inline-block;">
+                            Show History
+                        </a>
+                        <a href="#" class="collapse-button" data-group-index="{{ loop.index0 }}" style="display: none;">
+                            Hide History
+                        </a>
+                    </div>
+                </div>            
+            {% endif %}
+            <div class="collapsed-units">
+                {% for conversation_unit in group[:-1] %}
+                <div class="conversation-unit collapsed">
+                    <div class="query-container">
+                        <div class="query">
+                            <h2 id="query-title">{{ conversation_unit["query"] }}</h2>
+                            <div class="query_id" data-value="{{ conversation_unit['query_id'] }}"></div>
+                            <div class="parent_query_id" data-value="{% if conversation_unit['parent_query_ids'] is not none %}{{ conversation_unit['parent_query_ids']|string }}{% else %}none{% endif %}"></div>
+                        </div>
+                    </div>
+                    <div class="response-container">
+                        <div class="response">
+                            <div id="response-text" class="markdown-body">{{ conversation_unit["response"] }}</div>
+                        </div>
+                        <div class="sources">
+                            {% if conversation_unit["search_results"] != [] %}
+                            <h5 class="sources-title">Sources</h5>
+                            {% endif %}
+                            {% for source in conversation_unit["search_results"] %}
+                            <a href="{{ source }}" class="source-item">{{ source }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
-                <div class="sources">
-                    {% if conversation_unit["search_results"] != [] %}
-                        <h5 class="sources-title">Sources</h5>
-                    {% endif %}
-                    {% for source in conversation_unit["search_results"] %}
-                        <a href="{{ source }}" class="source-item">{{ source }}</a>
-                    {% endfor %}
+                {% endfor %}
+            </div>
+            
+            {% if group %}
+            {% set last_conversation_unit = group[-1] %}
+            <div class="conversation-unit last">
+                <div class="query-container">
+                    <div class="query">
+                        <h2 id="query-title">{{ last_conversation_unit["query"] }}</h2>
+                        <div class="query_id" data-value="{{ last_conversation_unit['query_id'] }}"></div>
+                        <div class="parent_query_id" data-value="{% if last_conversation_unit['parent_query_ids'] is not none %}{{ last_conversation_unit['parent_query_ids']|string }}{% else %}none{% endif %}"></div>
+                    </div>
+                </div>
+                <div class="response-container">
+                    <div class="response">
+                        <div id="response-text" class="markdown-body">{{ last_conversation_unit["response"] }}</div>
+                    </div>
+                    <div class="sources">
+                        {% if last_conversation_unit["search_results"] != [] %}
+                            <h5 class="sources-title">Sources</h5>
+                        {% endif %}
+                        {% for source in last_conversation_unit["search_results"] %}
+                            <a href="{{ source }}" class="source-item">{{ source }}</a>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
+            {% endif %}
         </div>
-    {% endfor %}
+        {% endfor %}
+    {% else %}
+        {% for group in groups %}
+        <p>{{group}}</p>
+            {% for conversation_unit in group %}
+            <div class="conversation-unit">
+                <div class="query-container">
+                    <div class="query">
+                        <h2 id="query-title">{{ conversation_unit["query"] }}</h2>
+                        <div class="query_id" data-value="{{ conversation_unit['query_id'] }}"></div>
+                        <div class="parent_query_id" data-value="{% if conversation_unit['parent_query_ids'] is not none %}{{ conversation_unit['parent_query_ids']|string }}{% else %}none{% endif %}"></div>
+                    </div>
+                    {% set parent_querys = conversation_unit["parent_queries"] %}
+                    {% if parent_querys|length > 1 %}
+                        <div class="parent_queries">
+                            <h5 class="parent-queries-title">Parent Queries:</h5>
+                            <ol class="parent-queries-list">
+                                {% for parent_query_id, parent_query_text, history_included in parent_querys %}
+                                    <li>
+                                        <a href="/thread?thread_id={{ thread_id }}&query_id={{ parent_query_id }}" class="parent-query-text">
+                                            {{ parent_query_text[:95] }}{% if parent_query_text|length > 95 %}...{% endif %}
+                                            {% if history_included %}
+                                                <i class="fas fa-history included-icon" title="With History"></i>
+                                            {% else %}
+                                                <i class="fas fa-ban excluded-icon" title="Without History"></i>
+                                            {% endif %}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ol>
+                        </div>                                       
+                    {% endif %}
+                </div>
+                <div class="response-container">
+                    <div class="response">
+                        <div id="response-text" class="markdown-body">{{ conversation_unit["response"] }}</div>
+                    </div>
+                    <div class="sources">
+                        {% if conversation_unit["search_results"] != [] %}
+                            <h5 class="sources-title">Sources</h5>
+                        {% endif %}
+                        {% for source in conversation_unit["search_results"] %}
+                            <a href="{{ source }}" class="source-item">{{ source }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
 </div>
 <div class="user-input-area">
     <textarea id="user-input" placeholder="Type your query here" autofocus></textarea>

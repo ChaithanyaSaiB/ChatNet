@@ -1,0 +1,148 @@
+/* General Conversation Group Styling */
+.conversation-group {
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    position: relative;
+}
+
+/* Style for Merged Groups (When more than one group exists) */
+#chat-area:has(.conversation-group:nth-child(2)) .conversation-group {
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+/* Switch Styles */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.sticky-controls {
+    position: sticky;
+    top: 0;
+    background-color: #f9f9f9;
+    padding: 10px;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.group-toggle {
+    position: static;
+}
+
+.conversation-unit.collapsed {
+    display: none;
+}
+
+.expand-toggle .collapse-button {
+    display: none;
+    text-align: left;
+    margin-bottom: 0;
+}
+
+.collapse-button,
+.expand-button {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.collapse-button:hover,
+.expand-button:hover {
+    background-color: #2980b9;
+}
+
+.collapsed-units {
+    margin-top: 10px;
+}
+
+.expanded-units {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.parent-queries-list {
+    list-style-type: decimal; /* Use numbers */
+    padding-left: 20px; /* Add some indentation */
+}
+
+.parent-query-text {
+    /* Add any specific styling for the links here */
+    text-decoration: none; /* Example: remove underline */
+}
+
+.included-icon {
+    color: green; /* Or another color indicating inclusion */
+    margin-left: 5px; /* Add some spacing */
+}
+
+.excluded-icon {
+    color: red; /* Or another color indicating exclusion */
+    margin-left: 5px;
+}
+

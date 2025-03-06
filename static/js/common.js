@@ -75,9 +75,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Call this function after the content is loaded/updated
-    scrollToQuery();
+    
     renderMarkdown();
-
+    scrollToQuery();
 
     function logout() {
 
