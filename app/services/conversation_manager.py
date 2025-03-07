@@ -39,10 +39,11 @@ class ConversationManager(BaseService):
             # Initialize conversation_history if it's None
             if conversation_history is None:
                 conversation_history = []
-
+            print("before appending conversation unit")
             conversation_history.append(new_conversation_unit)
+            print("before lanchain message conversions")
             messages = get_langchain_messages(conversation_history)
-
+            print("passed langchain message conversions")
             agent_response = langgraph_agent.invoke({"messages": messages})
             print('&'*15)
             print(agent_response)

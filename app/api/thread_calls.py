@@ -105,15 +105,23 @@ async def post_thread(
     conversation_manager: ConversationManager = Depends(get_conversation_manager),
     user: User = Depends(access_check)
 ):
-    print("ustquery id is",just_query_id)
-    #thread_continuation = await request.json()
     aggregate_history = []
+
+    if len(query_id) > 1:
+        aggregate_history += [{"query": "Initial Merge Message"}]
+
     for each_query_id in query_id:
+        if len(query_id) > 1:
+            aggregate_history += [{"query": "Conversation Start"}]
         query_history = conversation_manager.get_query_conversation_history(
             query_id=each_query_id, 
             just_query_id=True if each_query_id in just_query_id else False
         )
         aggregate_history += query_history
+
+    if len(query_id) > 1:
+            aggregate_history += [{"query": "End Merge Message"}]
+
     # conversation_history = conversation_manager.get_query_conversation_history(
     #     query_ids=query_id,
     #     just_query_id=False
