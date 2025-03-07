@@ -116,56 +116,129 @@ class ConversationManager(BaseService):
         except Exception as e:
             self.handle_error(e)
 
-    def get_query_conversation_history(self, query_id: int):
+    def get_query_conversation_history(self, query_id: int, just_query_id: bool):
         try:
+            print("got query id as",query_id,"and just query value as",just_query_id)
             # First, check if the query exists
             query = self.db.query(Query).filter(Query.query_id == query_id).first()
             if not query:
-                return None
+                raise ValueError(f"The following query ID does not exist: {query_id}")
+            
+            if just_query_id:
+                print("went in the just query block")
+                # First, query all relevant QueryRelation objects
+                parent_relations = (
+                    self.db.query(QueryRelation)
+                    .filter(QueryRelation.child_query_id == query.query_id)
+                    .options(
+                        joinedload(QueryRelation.parent_query)
+                    )
+                    .all()
+                )
 
-            # Recursive CTE to get all ancestors
-            QueryCTE = aliased(Query)
-            RelationCTE = aliased(QueryRelation)
-            recursive_cte = (
-                select(QueryCTE, RelationCTE.parent_query_id)
-                .join(RelationCTE, RelationCTE.child_query_id == QueryCTE.query_id)
-                .where(QueryCTE.query_id == query_id)
-                .cte(recursive=True)
-            )
+                # Initialize the three lists
+                parent_query_ids = []
+                parent_query_texts = []
+                history_included_flags = []
 
-            ancestors = recursive_cte.union_all(
-                select(QueryCTE, RelationCTE.parent_query_id)
-                .join(RelationCTE, RelationCTE.child_query_id == QueryCTE.query_id)
-                .join(recursive_cte, recursive_cte.c.parent_query_id == QueryCTE.query_id)
-            )
+                # Populate the lists
+                for relation in parent_relations:
+                    parent_query_ids.append(relation.parent_query_id)
+                    parent_query_texts.append(relation.parent_query.query_text)
+                    history_included_flags.append(relation.history_included)
 
-            # Query to get all ancestors and the original query, ordered from root to leaf
-            query_chain = (
-                self.db.query(Query, QueryRelation.parent_query_id)
-                .join(ancestors, ancestors.c.query_id == Query.query_id, isouter=True)
-                .outerjoin(QueryRelation, QueryRelation.child_query_id == Query.query_id)
-                .filter(or_(Query.query_id == query_id, Query.query_id == ancestors.c.query_id))
-                .order_by(ancestors.c.query_id)
-                .all()
-            )
-
-            conversation_history = []
-            for q, parent_query_id in query_chain:
-                # Fetch search results
-                search_results = self.db.query(SearchResult).filter(SearchResult.query_id == q.query_id).all()
+                search_results = self.db.query(SearchResult).filter(SearchResult.query_id == query.query_id).all()
                 search_result_urls = [sr.url for sr in search_results] if search_results else []
-                
-                # Create dictionary for this query-response pair
-                conversation_item = {
-                    "query_id": q.query_id,
-                    "parent_query_ids": parent_query_id,
-                    "query": q.query_text,
-                    "response": q.ai_response,
-                    "search_results": search_result_urls # List of URLs
-                }
 
-                conversation_history.append(conversation_item)
-            return conversation_history
+                return [{
+                        "query_id": query.query_id,
+                        "parent_queries": list(zip(
+                            parent_query_ids, 
+                            parent_query_texts, 
+                            history_included_flags
+                        )),
+                        "query": query.query_text,
+                        "response": query.ai_response,
+                        "search_results": search_result_urls # List of URLs
+                    }]
+            else:
+                # Recursive CTE to get all ancestors
+                QueryCTE = aliased(Query)
+                RelationCTE = aliased(QueryRelation)
+                recursive_cte = (
+                    select(QueryCTE, 
+                        func.first_value(RelationCTE.parent_query_id)
+                            .over(partition_by=QueryCTE.query_id, order_by=RelationCTE.relationship_id)
+                            .label('parent_query_id'))
+                    .join(RelationCTE, RelationCTE.child_query_id == QueryCTE.query_id)
+                    .where(QueryCTE.query_id == query_id)
+                    .cte(recursive=True)
+                )
+
+                ancestors = recursive_cte.union_all(
+                    select(QueryCTE, 
+                        func.first_value(RelationCTE.parent_query_id)
+                            .over(partition_by=QueryCTE.query_id, order_by=RelationCTE.relationship_id)
+                            .label('parent_query_id'))
+                    .join(RelationCTE, RelationCTE.child_query_id == QueryCTE.query_id)
+                    .join(recursive_cte, recursive_cte.c.parent_query_id == QueryCTE.query_id)
+                )
+
+                ParentQuery = aliased(Query)
+
+                # Query to get all ancestors and the original query, ordered from root to leaf
+                query_chain = (
+                    self.db.query(
+                        Query,
+                        QueryRelation.parent_query_id, 
+                        ParentQuery.query_text.label("parent_query_text"),
+                        QueryRelation.history_included
+                    )
+                    .join(ancestors, ancestors.c.query_id == Query.query_id, isouter=True)
+                    .outerjoin(QueryRelation, QueryRelation.child_query_id == Query.query_id)
+                    .outerjoin(ParentQuery, ParentQuery.query_id == QueryRelation.parent_query_id)
+                    .filter(or_(Query.query_id == query_id, Query.query_id == ancestors.c.query_id))
+                    .order_by(ancestors.c.query_id)
+                    .all()
+                )
+
+                parent_query_id_map = defaultdict(list)
+                parent_query_text_map = defaultdict(list)
+                history_included_map = defaultdict(list)
+                for q, parent_query_id, parent_query_text, history_included in query_chain:
+                    if parent_query_id is not None:
+                        parent_query_id_map[q.query_id].append(parent_query_id)
+                        parent_query_text_map[q.query_id].append(parent_query_text)
+                        history_included_map[q.query_id].append(history_included)
+
+                processed_ids = set()
+                conversation_history = []
+                for q, parent_query_id, parent_query_text, history_included in query_chain:
+                    matching_tuple = [t for t in processed_ids if t[0] == q.query_id]
+                    if matching_tuple and matching_tuple[0][1] != parent_query_id:
+                        continue
+
+                    # Fetch search results
+                    search_results = self.db.query(SearchResult).filter(SearchResult.query_id == q.query_id).all()
+                    search_result_urls = [sr.url for sr in search_results] if search_results else []
+                    
+                    # Create dictionary for this query-response pair
+                    conversation_item = {
+                        "query_id": q.query_id,
+                        "parent_queries": list(zip(
+                            parent_query_id_map.get(q.query_id, []), 
+                            parent_query_text_map.get(q.query_id, []), 
+                            history_included_map.get(q.query_id, [])
+                        )),
+                        "query": q.query_text,
+                        "response": q.ai_response,
+                        "search_results": search_result_urls # List of URLs
+                    }
+
+                    conversation_history.append(conversation_item)
+                    processed_ids.add((q.query_id, parent_query_id))
+
+                return conversation_history
         except Exception as e:
             self.handle_error(e)
     

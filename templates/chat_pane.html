@@ -1,7 +1,6 @@
 <input type="hidden" name="thread_id" value="{{ thread_id }}">
 <input type="hidden" name="query_id" value="{{ query_id|join(', ') }}">
-
-
+<input type="hidden" name="just_query_ids" value="">
 
 {% set query_ids = (query_id if query_id is iterable and query_id is not string else [query_id]) %}
 {% set groups = [] %}
@@ -37,13 +36,10 @@
 
 
 
-<input type="hidden" name="just_query_ids" value="">
+
 <div id="chat-area">
-    <p>{{conversation_history}}</p>
-    <p>{{groups|length}}</p>
     {% if groups|length > 1 %}
         {% for group in groups %}
-        <p>{{group}}</p>
             <div class="conversation-group">
                 {% if group|length > 1 %}
                 <div class="sticky-controls">

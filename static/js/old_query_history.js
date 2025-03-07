@@ -64,13 +64,11 @@ function selectedNodeChanged(queryId) {
     });
 }
 
-function multipleSelectionChanged(queryId, merged_status=null) {
+function multipleSelectionChanged(queryId) {
     console.log('multipleSelectionChanged:', queryId);
     const threadId = parseInt(document.querySelector('input[name="thread_id"]').value, 10);
     const queryIdsString = document.querySelector('input[name="query_id"]').value;
     const queryIdsList = queryIdsString.split(', ').map(Number);
-    const justQueryIds = document.querySelector('input[name="just_query_ids"]').value;
-    const justQueryIdsList = justQueryIds ? justQueryIds.split(',').map(Number) : [];
     
     const queryindex = queryIdsList.indexOf(queryId);
     if (queryindex !== -1) {
@@ -80,21 +78,9 @@ function multipleSelectionChanged(queryId, merged_status=null) {
         queryIdsList.push(queryId);
     }
 
-    if (merged_status)
-    {
-        console.log("adding query to just query ids list");
-        const justQueryindex = justQueryIdsList.indexOf(queryId);
-        if (justQueryindex !== -1) {
-            justQueryIdsList.splice(justQueryindex, 1);
-        } 
-        else {
-            justQueryIdsList.push(queryId);
-        }
-    }  
-    console.log("justqueryidslist is",justQueryIdsList);  
     // console.log("generated - ",window.buildDynamicURL(threadId, queryIdsList, true, justQueryIdsList));
 
-    fetch(window.buildDynamicURL(threadId, queryIdsList, true, justQueryIdsList), {
+    fetch(window.buildDynamicURL(threadId, queryIdsList, true), {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
     })

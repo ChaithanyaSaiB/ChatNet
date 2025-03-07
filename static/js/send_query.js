@@ -221,7 +221,7 @@ function normalReplyBuilder(userInput, queryIdsList, justQueryIds = null, lastQu
     
     window.scrollToQuery();
     console.log("justqueryids before fetch",justQueryIds);
-    console.log("url generated in normal reply builder is",dbuildDynamicURL(threadId, queryIdsList, false, justQueryIds));
+    console.log("url generated in normal reply builder is",window.buildDynamicURL(threadId, queryIdsList, false, justQueryIds));
     fetch(window.buildDynamicURL(threadId, queryIdsList, false, justQueryIds), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

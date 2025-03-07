@@ -44,7 +44,7 @@ def get_thread(
 ):
     if query_id is None:
         query_id = conversation_manager.get_latest_query_id(thread_id=thread_id)
-        conversation_history = conversation_manager.get_multiple_query_conversation_history(query_ids=[query_id], just_query_ids=[])
+        conversation_history = conversation_manager.get_query_conversation_history(query_id=query_id, just_query_id=False)
         return templates.TemplateResponse(
             "continued_thread.html",
             {
@@ -55,11 +55,18 @@ def get_thread(
             }
         )
     else:
-        conversation_history = conversation_manager.get_multiple_query_conversation_history(query_ids=query_id, just_query_ids=[])
+        aggregate_history = []
+        for each_query_id in query_id:
+            query_history = conversation_manager.get_query_conversation_history(
+                query_id=each_query_id, 
+                just_query_id=False
+            )
+            aggregate_history += query_history
+        # conversation_history = conversation_manager.get_multiple_query_conversation_history(query_ids=query_id, just_query_ids=[])
         if json_response_format:
             query_id_copy = query_id.copy()
-            print("conversation history",conversation_history)
-            for conversation_unit in conversation_history:
+            print("conversation history",aggregate_history)
+            for conversation_unit in aggregate_history:
                 print(conversation_unit["query_id"])
                 print(conversation_unit["query"])
                 print(conversation_unit["parent_queries"])
@@ -68,7 +75,7 @@ def get_thread(
                 request=request,
                 thread_id=thread_id,
                 query_id=query_id,
-                conversation_history=conversation_history
+                conversation_history=aggregate_history
             )
             
             # Return JSON response
@@ -84,7 +91,7 @@ def get_thread(
                     "request": request,
                     "thread_id": thread_id,
                     "query_id": query_id,
-                    "conversation_history": conversation_history
+                    "conversation_history": aggregate_history
                 }
             )
 
@@ -100,18 +107,25 @@ async def post_thread(
 ):
     print("ustquery id is",just_query_id)
     #thread_continuation = await request.json()
-    conversation_history = conversation_manager.get_multiple_query_conversation_history(
-        query_ids=query_id, 
-        just_query_ids=just_query_id
-    )
+    aggregate_history = []
+    for each_query_id in query_id:
+        query_history = conversation_manager.get_query_conversation_history(
+            query_id=each_query_id, 
+            just_query_id=True if each_query_id in just_query_id else False
+        )
+        aggregate_history += query_history
+    # conversation_history = conversation_manager.get_query_conversation_history(
+    #     query_ids=query_id,
+    #     just_query_id=False
+    # )
     print("query id is",query_id)
     print("justqueryids are", just_query_id)
-    print(conversation_history)
+    print(aggregate_history)
     updated_conversation_history = conversation_manager.create_query_with_response(
         thread_id=thread_id,
         user_id=user.user_id,
         query_content=query_text.query,
-        conversation_history=conversation_history,
+        conversation_history=aggregate_history,
         parent_query_ids=query_id,
         history_not_included = just_query_id
     )
