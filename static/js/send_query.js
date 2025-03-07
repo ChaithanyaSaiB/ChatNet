@@ -39,7 +39,15 @@ window.buildDynamicURL= function(threadId, queryIds, json, justQueryIds=null) {
         }
     else
     {
-        return baseURL + (queryParams ? '&' + queryParams : '');
+        if(justQueryIds)
+        {
+            console.log("pass 1");
+            return baseURL + (queryParams ? '&' + queryParams : '') + (justQueryParams ? '&' + justQueryParams : '');
+        }
+        else
+        {
+            return baseURL + (queryParams ? '&' + queryParams : '');
+        }
     }
 }
 
@@ -159,7 +167,7 @@ function sendQuery() {
         {
             const justQueryIds = document.querySelector('input[name="just_query_ids"]').value;
             const justQueryIdsList = justQueryIds ? justQueryIds.split(',').map(Number) : [];
-            
+            console.log("-- initially just querys are",justQueryIdsList)
             mergedReplyBuilder(userInput, queryIdsList, justQueryIdsList);
         }
     }
@@ -189,13 +197,17 @@ function normalReplyBuilder(userInput, queryIdsList, justQueryIds = null, lastQu
                     <ol class="parent-queries-list">
         `;
 
+        console.log("-- checking just query ids", justQueryIds);
+
         lastQueries.forEach(query => {
             const parent_query_id = query.queryId;
             const parent_query_text = query.queryText;
 
             const truncatedText = parent_query_text.length > 95 ? parent_query_text.substring(0, 95) + "..." : parent_query_text;
-            const history_included = !justQueryIds.includes(parent_query_id.toString());
-            
+            const history_included = !justQueryIds.includes(parent_query_id);
+            console.log("parent id --- ",parent_query_id);
+            console.log("type of justqueryids",typeof(justQueryIds),"and type of parent query id",typeof(parent_query_id));
+            console.log(!justQueryIds.includes(parent_query_id));
             htmlContent += `
                         <li>
                             <a href="/thread?thread_id=${threadId}&query_id=${parent_query_id}" class="parent-query-text">
@@ -221,7 +233,7 @@ function normalReplyBuilder(userInput, queryIdsList, justQueryIds = null, lastQu
     
     window.scrollToQuery();
     console.log("justqueryids before fetch",justQueryIds);
-    console.log("url generated in normal reply builder is",window.buildDynamicURL(threadId, queryIdsList, false, justQueryIds));
+    // console.log("url generated in normal reply builder is",window.buildDynamicURL(threadId, queryIdsList, false, justQueryIds));
     fetch(window.buildDynamicURL(threadId, queryIdsList, false, justQueryIds), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -364,7 +376,7 @@ function extractLastConversationIdAndQueryText()
         if (lastConversationUnit) {
             // 5. Extract the query_id:
             const queryIdElement = lastConversationUnit.querySelector('.query_id');
-            const queryId = queryIdElement ? queryIdElement.dataset.value : null;
+            const queryId = queryIdElement ? parseInt(queryIdElement.dataset.value,10) : null;
 
             // 6. Extract the query text:
             const queryTitleElement = lastConversationUnit.querySelector('#query-title');
