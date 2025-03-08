@@ -1,4 +1,4 @@
-/* General Conversation Group Styling */
+/* Styles the container for a group of conversations */
 .conversation-group {
     border: 1px solid #ddd;
     margin-bottom: 20px;
@@ -8,7 +8,7 @@
     position: relative;
 }
 
-/* Style for Merged Groups (When more than one group exists) */
+/* Applies specific styling when multiple conversation groups exist */
 #chat-area:has(.conversation-group:nth-child(2)) .conversation-group {
     border: 1px solid #ddd;
     margin-bottom: 20px;
@@ -17,7 +17,7 @@
     background-color: #f9f9f9;
 }
 
-/* Switch Styles */
+/* Defines the container for the toggle switch */
 .switch {
     position: relative;
     display: inline-block;
@@ -25,12 +25,14 @@
     height: 24px;
 }
 
+/* Hides the default checkbox input */
 .switch input {
     opacity: 0;
     width: 0;
     height: 0;
 }
 
+/* Styles the toggle switch slider */
 .slider {
     position: absolute;
     cursor: pointer;
@@ -43,6 +45,7 @@
     border-radius: 34px;
 }
 
+/* Creates the toggle switch button */
 .slider:before {
     position: absolute;
     content: "";
@@ -55,27 +58,32 @@
     border-radius: 50%;
 }
 
+/* Styles for the checked state of the toggle switch */
 input:checked + .slider {
     background-color: #2196F3;
 }
 
+/* Adds focus styles to the toggle switch */
 input:focus + .slider {
     box-shadow: 0 0 1px #2196F3;
 }
 
+/* Moves the toggle switch button when checked */
 input:checked + .slider:before {
     transform: translateX(26px);
 }
 
-/* Rounded sliders */
+/* Ensures the toggle switch has rounded corners */
 .slider.round {
     border-radius: 34px;
 }
 
+/* Ensures the toggle switch button is round */
 .slider.round:before {
     border-radius: 50%;
 }
 
+/* Styles for the sticky controls at the top of the chat area */
 .sticky-controls {
     position: sticky;
     top: 0;
@@ -87,20 +95,24 @@ input:checked + .slider:before {
     align-items: center;
 }
 
+/* Positions the group toggle switch */
 .group-toggle {
     position: static;
 }
 
+/* Hides collapsed conversation units */
 .conversation-unit.collapsed {
     display: none;
 }
 
+/* Hides the collapse button in the expand toggle */
 .expand-toggle .collapse-button {
     display: none;
     text-align: left;
     margin-bottom: 0;
 }
 
+/* Styles for collapse and expand buttons */
 .collapse-button,
 .expand-button {
     display: inline-block;
@@ -112,37 +124,42 @@ input:checked + .slider:before {
     cursor: pointer;
 }
 
+/* Hover styles for collapse and expand buttons */
 .collapse-button:hover,
 .expand-button:hover {
     background-color: #2980b9;
 }
 
+/* Adds margin to the top of collapsed units */
 .collapsed-units {
     margin-top: 10px;
 }
 
+/* Adds margin to the top and bottom of expanded units */
 .expanded-units {
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
+/* Styles the list of parent queries */
 .parent-queries-list {
-    list-style-type: decimal; /* Use numbers */
-    padding-left: 20px; /* Add some indentation */
+    list-style-type: decimal;
+    padding-left: 20px;
 }
 
+/* Styles the text of parent query links */
 .parent-query-text {
-    /* Add any specific styling for the links here */
-    text-decoration: none; /* Example: remove underline */
+    text-decoration: none;
 }
 
+/* Styles the icon for included items */
 .included-icon {
-    color: green; /* Or another color indicating inclusion */
-    margin-left: 5px; /* Add some spacing */
-}
-
-.excluded-icon {
-    color: red; /* Or another color indicating exclusion */
+    color: green;
     margin-left: 5px;
 }
 
+/* Styles the icon for excluded items */
+.excluded-icon {
+    color: red;
+    margin-left: 5px;
+}

@@ -1,9 +1,10 @@
-/* 4. Remove Scrollbar & Add Gradient Fade */
+/* Styles for the chat area */
 .chat-area {
     position: relative;
-    overflow-y: auto; /* Ensure scrolling is restored */
+    overflow-y: auto; /* Enables vertical scrolling for chat content */
 }
 
+/* Container for user input elements */
 .user-input-area {
     display: flex;
     align-items: center;
@@ -17,6 +18,7 @@
     right: 10px;
 }
 
+/* Styles for the text input field */
 #user-input {
     flex: 1;
     padding: 8px;
@@ -29,6 +31,7 @@
     font-size: 16px;
 }
 
+/* Styles for the send button */
 #send-button {
     padding: 8px 12px;
     background-color: #27ae60;
@@ -39,6 +42,7 @@
     transition: all 0.3s ease;
 }
 
+/* Hover effect for the send button */
 #send-button:hover {
     background-color: #1e8449;
     border-color: #27ae60;

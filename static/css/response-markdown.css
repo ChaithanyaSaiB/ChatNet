@@ -1,4 +1,4 @@
-/* General Styles */
+/* Base styles for markdown content */
 .markdown-body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
@@ -6,7 +6,7 @@
     padding: 20px;
 }
 
-/* Headers */
+/* Heading styles with consistent spacing and border for h1 and h2 */
 .markdown-body h1,
 .markdown-body h2,
 .markdown-body h3,
@@ -48,16 +48,15 @@
     color: #777;
 }
 
-/* Paragraphs */
+/* Paragraph spacing */
 .markdown-body p {
     margin-bottom: 16px;
 }
 
-/* markdown.css */
-
+/* List styling with proper indentation and spacing */
 .markdown-body ul,
 .markdown-body ol {
-    padding-left: 25px; /* Adjust as needed */
+    padding-left: 25px;
     margin-bottom: 16px;
     list-style-position: outside;
 }
@@ -66,41 +65,38 @@
     margin-bottom: 8px;
 }
 
-.markdown-body ul li, /* More Specific */
-.markdown-body ol li { /* More Specific */
-    margin-left: 0; /* Reset any default margin on list items */
-    padding-left: 0; /* Reset any default padding on list items */
+.markdown-body ul li,
+.markdown-body ol li {
+    margin-left: 0;
+    padding-left: 0;
 }
 
 .markdown-body ul {
-    list-style-type: disc; /* Or 'circle', 'square', or 'none' */
+    list-style-type: disc;
 }
 
 .markdown-body ol {
-    list-style-type: decimal; /* Or 'upper-roman', 'lower-alpha', etc. */
+    list-style-type: decimal;
 }
 
-.markdown-body ul ul, /* Nested Unordered Lists */
-.markdown-body ol ol, /* Nested Ordered Lists */
-.markdown-body ul ol, /* Unordered List inside Ordered List */
-.markdown-body ol ul { /* Ordered List inside Unordered List */
-    padding-left: 40px; /* Adjust for nested indentation */
+.markdown-body ul ul,
+.markdown-body ol ol,
+.markdown-body ul ol,
+.markdown-body ol ul {
+    padding-left: 40px;
 }
 
-/* markdown.css */
-
+/* Custom list marker positioning */
 .markdown-body ul li::marker,
 .markdown-body ol li::marker {
-    text-indent: 0; /* Reset text-indent */
-    text-align: left; /* Ensure left alignment */
-    display: inline-block; /* Treat marker as inline element */
-    width: 1.5em; /* Adjust width as needed */
-    margin-left: -1.5em; /* Adjust margin to align properly */
+    text-indent: 0;
+    text-align: left;
+    display: inline-block;
+    width: 1.5em;
+    margin-left: -1.5em;
 }
 
-
-
-/* Links */
+/* Link styling with hover effect */
 .markdown-body a {
     color: #0366d6;
     text-decoration: none;
@@ -110,7 +106,7 @@
     text-decoration: underline;
 }
 
-/* Blockquotes */
+/* Blockquote styling */
 .markdown-body blockquote {
     margin: 16px 0;
     padding: 0 15px;
@@ -118,7 +114,7 @@
     border-left: 4px solid #ddd;
 }
 
-/* Code */
+/* Inline code and code block styling */
 .markdown-body code {
     padding: 0.2em 0.4em;
     margin: 0;
@@ -149,7 +145,7 @@
     border-radius: 0;
 }
 
-/* Tables */
+/* Table styling with alternating row colors */
 .markdown-body table {
     width: 100%;
     margin-bottom: 16px;
@@ -176,7 +172,7 @@
     background-color: #f8f8f8;
 }
 
-/* Images */
+/* Responsive image sizing */
 .markdown-body img {
     max-width: 100%;
 }

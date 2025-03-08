@@ -1,4 +1,4 @@
-/* Chat Pane (Grid 5) - Updated */
+/* Styles for the main chat area */
 .chat-pane {
     position: relative;
     background-color: #f0f0f0;
@@ -8,7 +8,7 @@
     border-radius: 10px;
 }
 
-/* Centered User Input Container */
+/* Container for user input elements */
 .user-input-container {
     display: flex;
     flex-direction: column;
@@ -17,7 +17,7 @@
     max-width: 500px;
 }
 
-/* User Input Expands into Textarea */
+/* Textarea for user input with dynamic height */
 #user-input {
     width: 100%;
     padding: 10px;
@@ -29,7 +29,7 @@
     font-size: 16px;
 }
 
-/* Submit Button */
+/* Send button styling */
 #send-button {
     margin-top: 10px;
     padding: 10px 15px;
@@ -42,6 +42,7 @@
     transition: all 0.3s ease;
 }
 
+/* Hover effect for send button */
 #send-button:hover {
     background-color: #1e8449;
     border-color: #27ae60;

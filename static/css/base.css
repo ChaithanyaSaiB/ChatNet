@@ -1,12 +1,14 @@
+/* Reset default styles and apply border-box sizing to all elements */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* Style the body to fill the viewport, center content, and set basic appearance */
 body {
     height: 100vh;
-    overflow: hidden; /* Prevent full-page scrolling */
+    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -14,6 +16,7 @@ body {
     font-family: Arial, sans-serif;
 }
 
+/* Define the main grid layout for the application */
 .grid-container {
     display: grid;
     grid-template-columns: 15% 55% 30%;

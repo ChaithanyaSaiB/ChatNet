@@ -1,8 +1,10 @@
+/* Center the canvas element */
 canvas {
     display: block;
     margin: auto;
 }
 
+/* Style for each node in the tree */
 .node {
     display: flex;
     flex-direction: column;
@@ -12,6 +14,7 @@ canvas {
     padding-top: 20px;
 }
 
+/* Style for the value circle within each node */
 .value {
     width: 40px;
     height: 40px;
@@ -25,6 +28,7 @@ canvas {
     z-index: 2;
 }
 
+/* Container for child nodes */
 .children {
     display: flex;
     justify-content: center;
@@ -32,48 +36,54 @@ canvas {
     padding-top: 20px;
 }
 
+/* Create connecting lines for nodes */
 .node::before,
 .node::after {
     content: '';
     position: absolute;
-    top: -10px; /* Moved up by 5px */
+    top: -10px;
     width: 2px;
     height: 30px;
     background-color: #3498db;
     z-index: 1;
 }
 
+/* Left connecting line */
 .node::before {
     left: 10px;
     transform: rotate(45deg);
     transform-origin: top left;
 }
 
+/* Right connecting line */
 .node::after {
     right: 10px;
     transform-origin: top right;
     transform: rotate(-45deg);
 }
 
-/* For single child connection */
+/* Adjust connecting line for single child */
 .node:only-child::before {
-    /*left: 50%;*/
     transform: none;
     height: 30px;
 }
 
+/* Hide right connecting line for single child */
 .node:only-child::after {
     display: none;
 }
 
+/* Hide right connecting line for first child */
 .node:first-child:not(:only-child)::after {
     display: none;
 }
 
+/* Hide left connecting line for last child */
 .node:last-child:not(:only-child)::before {
     display: none;
 }
 
+/* Hide connecting lines for root node */
 .root::before,
 .root::after {
     display: none;

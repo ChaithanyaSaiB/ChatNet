@@ -1,8 +1,10 @@
+/* Disable interaction for elements with this class */
 .disabled {
     pointer-events: none;
     cursor: default;
 }
 
+/* Styles for the login bar at the top of the page */
 .login-bar {
     grid-column: span 2;
     display: flex;
@@ -10,9 +12,10 @@
     align-items: center;
     background-color: #ecf0f1;
     padding-right: 20px;
-    border-bottom: 1px solid rgba(96, 93, 93, 0.2); /* 40% Opacity */
+    border-bottom: 1px solid rgba(96, 93, 93, 0.2);
 }
 
+/* Common styles for login and logout buttons */
 .login-button, .logout-button {
     text-decoration: none;
     background-color: #3498db;
@@ -21,6 +24,7 @@
     border-radius: 5px;
 }
 
+/* Additional styles specific to the logout button */
 .logout-button {
     margin-left: 10px;
     display: none;
