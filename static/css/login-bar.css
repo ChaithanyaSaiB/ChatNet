@@ -1,0 +1,27 @@
+.disabled {
+    pointer-events: none;
+    cursor: default;
+}
+
+.login-bar {
+    grid-column: span 2;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    background-color: #ecf0f1;
+    padding-right: 20px;
+    border-bottom: 1px solid rgba(96, 93, 93, 0.2); /* 40% Opacity */
+}
+
+.login-button, .logout-button {
+    text-decoration: none;
+    background-color: #3498db;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.logout-button {
+    margin-left: 10px;
+    display: none;
+}

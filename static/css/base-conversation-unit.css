@@ -1,0 +1,113 @@
+.conversation-unit {
+    display: flex;
+    flex-direction: column; 
+    margin-bottom: 10px;
+}
+
+.query-container {
+    background-color: #e0f7fa; /* Light Cyan */
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 10px;
+    align-self: flex-end;
+    width: fit-content;
+    max-width: 95%;
+}
+
+/* Spacing for elements inside Chat Area */
+.query, .sources, .response, .suggested-queries {
+    margin-bottom: 20px;
+}
+
+/* Query Styling */
+#query-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2c3e50; /* Dark Blue */
+}
+
+.query-container .query #query-title {
+    text-align: justify; /* Added text justification */
+    font-size: 16px;
+    font-weight: bold;
+    color: #006064; /* Dark Cyan */
+    line-height: 1.5; /* Added line spacing */
+    word-wrap: break-word; /* Ensures long words don't overflow */
+}
+
+/* Response Container Styles */
+.response-container {
+    background-color: #DCF8C6; /* Light Green */
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 10px;
+    align-self: flex-start;
+    width: fit-content;
+    max-width: 95%;
+}
+
+.conversation-unit:first-child .response-container {
+    margin-right: 0; /* Or any specific value to reset padding/margin */
+}
+
+/* Sources Section */
+.sources-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #16a085; /* Teal */
+}
+
+.source-item {
+    display: block;
+    color: #2980b9; /* Blue */
+    text-decoration: none;
+    margin-top: 5px;
+}
+
+.source-item:hover {
+    text-decoration: underline;
+}
+
+.sources, .suggested-queries {
+    margin-top: 10px;
+    padding-left: 15px;
+}
+
+.sources-title, .suggested-queries-title {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.source-item, .suggested-query-item {
+    font-size: 14px;
+}
+
+#response-text {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+    text-align: justify;
+}
+
+.response-container .response #response-text {
+    font-size: 16px;
+    color: #000;
+}
+
+/* Suggested Queries */
+.suggested-queries-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #8e44ad; /* Purple */
+}
+
+.suggested-query-item {
+    display: block;
+    color: #9b59b6; /* Light Purple */
+    text-decoration: none;
+    margin-top: 5px;
+}
+
+.suggested-query-item:hover {
+    text-decoration: underline;
+}

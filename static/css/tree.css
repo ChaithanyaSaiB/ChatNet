@@ -1,0 +1,80 @@
+canvas {
+    display: block;
+    margin: auto;
+}
+
+.node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    justify-content: center;
+    padding-top: 20px;
+}
+
+.value {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #3498db;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.children {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    padding-top: 20px;
+}
+
+.node::before,
+.node::after {
+    content: '';
+    position: absolute;
+    top: -10px; /* Moved up by 5px */
+    width: 2px;
+    height: 30px;
+    background-color: #3498db;
+    z-index: 1;
+}
+
+.node::before {
+    left: 10px;
+    transform: rotate(45deg);
+    transform-origin: top left;
+}
+
+.node::after {
+    right: 10px;
+    transform-origin: top right;
+    transform: rotate(-45deg);
+}
+
+/* For single child connection */
+.node:only-child::before {
+    /*left: 50%;*/
+    transform: none;
+    height: 30px;
+}
+
+.node:only-child::after {
+    display: none;
+}
+
+.node:first-child:not(:only-child)::after {
+    display: none;
+}
+
+.node:last-child:not(:only-child)::before {
+    display: none;
+}
+
+.root::before,
+.root::after {
+    display: none;
+}
