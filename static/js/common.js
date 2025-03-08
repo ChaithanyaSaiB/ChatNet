@@ -68,9 +68,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Include Marked.js library (https://github.com/markedjs/marked)
     window.renderMarkdown = function() {
+        console.log("render markdown");
         const responseElements = document.querySelectorAll('.markdown-body');
+        console.log(responseElements);
         responseElements.forEach(element => {
             element.innerHTML = marked.parse(element.textContent);
+            console.log(marked.parse(element.textContent));
+            console.log(element.innerHTML);
         });
     }
 
@@ -89,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             alert(data.message);
-            window.location.href = "/";
+            window.location.href = "/login";
         })
         .catch(error => console.error('Error getting user info:', error));
         

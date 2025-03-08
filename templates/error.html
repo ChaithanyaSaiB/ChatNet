@@ -1,18 +1,87 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Error</title>
-    <script>
-        function routeToLogin()
-        {
+<div id="error-component" class="error-container">
+    <h1>⚠️ Something Went Wrong</h1>
+    <p>Error Code: <span id="error-code">{{ status_code }}</span></p>
+    <p id="error-detail">{{ detail }}</p>
+    
+    <div id="error-401-content" style="display: none;">
+        <p>Redirecting to login page in <span id="countdown">3</span> seconds...</p>
+    </div>
+    <div id="error-413-content" style="display: none;">
+        <p>Extremely sorry. Since there is no context builder for this app we are hitting the limit of content that LLM can process. Please create a new thread to have a conversation or choose smaller history content to continue in the same thread</p>
+        <button onclick="errorComponent.reloadPage()">Reload Page</button>
+    </div>
+    <div id="error-other-content" style="display: none;">
+        <p>Please try again later or return home</p>
+        <button onclick="errorComponent.reloadPage()">Reload Page</button>
+    </div>
+</div>
+
+<script>
+    const errorComponent = {
+        init: function(statusCode) {
+            this.statusCode = statusCode;
+            document.getElementById('error-code').textContent = statusCode;
+            
+            if (statusCode == 401) {
+                document.getElementById('error-401-content').style.display = 'block';
+                this.startCountdown();
+            }
+            else if (statusCode == 413) {
+                document.getElementById('error-detail').style.display = 'none';
+                document.getElementById('error-413-content').style.display = 'block';
+            }
+            else {
+                document.getElementById('error-other-content').style.display = 'block';
+            }
+        },
+        startCountdown: function() {
+            let seconds = 3;
+            const countdownElement = document.getElementById('countdown');
+            const countdownInterval = setInterval(() => {
+                seconds--;
+                countdownElement.textContent = seconds;
+                if (seconds <= 0) {
+                    clearInterval(countdownInterval);
+                    this.routeToLogin();
+                }
+            }, 1000);
+        },
+        routeToLogin: function() {
             window.location.href = "/login";
+        },
+        routeToHome: function() {
+            window.location.href = "/";
+        },
+        reloadPage: function() {
+            location.reload();
         }
-    </script>
-</head>
-<body>
-    <h1>Error: {{ status_code }}</h1>
-    <p>{{ detail }}</p>
-    <button onclick="routeToLogin()">Go to Login</button>
-</body>
-</html>
+    };
+
+    // Initialize the component
+    errorComponent.init(parseInt("{{ status_code }}"));
+</script>
+
+<style>
+    .error-container {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        text-align: center;
+        border-radius: 8px;
+        background: #ffecec;
+        border: 1px solid #ffb3b3;
+    }
+    .error-container button {
+        padding: 0.8rem 1.5rem;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 1rem;
+    }
+    .error-container button:hover {
+        background: #0056b3;
+    }
+</style>

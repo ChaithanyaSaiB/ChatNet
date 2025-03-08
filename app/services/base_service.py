@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from typing import Type, TypeVar, List, Any, Optional
 from app.utils.api_error import APIError
+from app.utils.groq_api_exception import GroqAPIException
 
 T = TypeVar('T')
 
@@ -57,5 +58,8 @@ class BaseService:
         self.db.rollback()
         if isinstance(error, APIError):
             raise error
+        elif isinstance(error, GroqAPIException):
+            raise error
         else:
-            raise APIError(f"Database error: {str(error)}", status_code=500)
+            print("error object is",error)
+            raise APIError(str(error), status_code=500)

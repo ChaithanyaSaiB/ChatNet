@@ -26,13 +26,11 @@ function selectedNodeChanged(queryId) {
         headers: { 'Content-Type': 'application/json' }
     })
     .then(response => {
-        if (response.status === 401) {
-            throw new Error('Unauthorized: Please log in again.');
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw response;
         }
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
     })
     .then(data => {
         let chatPane = document.querySelector('.chat-pane');
@@ -45,22 +43,7 @@ function selectedNodeChanged(queryId) {
         window.scrollToQuery();
     })
     .catch(error => {
-        console.error('Error:', error);
-
-        // Display error message to user
-        let chatPane = document.querySelector('.chat-pane');
-        chatPane.innerHTML = `
-            <div class="error-message">
-                <h2>An error occurred</h2>
-                <p>${error.message}</p>
-                <button onclick="location.reload()">Try Again</button>
-            </div>
-        `;
-        
-        // If it's an authentication error, you might want to redirect to login page
-        if (error.message.includes('Unauthorized')) {
-            window.location.href = '/login'; // Adjust this URL as needed
-        }
+        errorDisplayForChatPane(error);
     });
 }
 
@@ -84,7 +67,13 @@ function multipleSelectionChanged(queryId) {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw response;
+        }        
+    })
     .then(data => {
         let chatPane = document.querySelector('.chat-pane');
         chatPane.innerHTML = data.html;
@@ -99,22 +88,36 @@ function multipleSelectionChanged(queryId) {
         window.scrollToQuery();
     })
     .catch(error => {
-        console.error('Error:', error);
-
-        // Display error message to user
-        let chatPane = document.querySelector('.chat-pane');
-        chatPane.innerHTML = `
-            <div class="error-message">
-                <h2>An error occurred</h2>
-                <p>${error.message}</p>
-                <button onclick="location.reload()">Try Again</button>
-            </div>
-        `;
-        
-        // If it's an authentication error, you might want to redirect to login page
-        if (error.message.includes('Unauthorized')) {
-            alert("You seem logged out! Please log back in")
-            window.location.href = '/login'; // Adjust this URL as needed
-        }
+        errorDisplayForChatPane(error);
     });
+}
+
+window.errorDisplayForChatPane = function(error) {
+    if (error instanceof Response) 
+    {
+        console.log("entered error display for chat pane");
+        console.log(error);
+        // It's an HTTP error, likely containing HTML
+        error.text().then(errorHtml => {
+            let chatPane = document.querySelector('.chat-pane');
+            chatPane.innerHTML = errorHtml;
+
+            const scripts = chatPane.querySelectorAll('script');
+            scripts.forEach(script => {
+                const newScript = document.createElement('script');
+                newScript.textContent = script.textContent; // Copy script content
+                document.body.appendChild(newScript); // Append it to the body
+                document.body.removeChild(newScript); // Clean up after execution
+            });
+
+            const statusCode = error.status;
+            errorComponent.init(statusCode);
+        });
+    }
+    else 
+    {
+        // It's a different kind of error
+        let chatPane = document.querySelector('.chat-pane');
+        chatPane.textContent = 'An unexpected error occurred: ' + error.message;
+    }
 }

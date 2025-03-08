@@ -16,35 +16,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 redirect: 'follow'
             })
             .then(response => {
-                if (response.status === 401) {
-                    throw new Error('Unauthorized: Please log in again.');
-                }
-                else if (response.redirected) {
-                    // Redirect properly
+                if (response.redirected) {
                     window.location.href = response.url;
+                } else {
+                    if (response.status === 401) {
+                        throw response; // Throw the response as is for unauthorized errors
+                    } else {
+                        // For all other errors, prepend a message and include the original error details
+                        return response.text().then(errorText => {
+                            let errorMessage = "Failed to create new thread. ";
+                            try {
+                                // Try to parse the error text as JSON
+                                const errorJson = JSON.parse(errorText);
+                                errorMessage += errorJson.detail || errorText;
+                            } catch (e) {
+                                // If parsing fails, use the error text as is
+                                errorMessage += errorText;
+                            }
+                            throw new Error(errorMessage);
+                        });
+                    }
                 }
-                else if (!response.ok) {
-                    return response.json().then(err => { throw new Error(err.detail || "Failed to create new thread."); });
-                }
+                
             })
             .catch(error => {
-                console.error('Error:', error);
-
-                // Display error message to user
-                let chatPane = document.querySelector('.chat-pane');
-                chatPane.innerHTML = `
-                    <div class="error-message">
-                        <h2>An error occurred</h2>
-                        <p>${error.message}</p>
-                    </div>
-                `;
-                
-                // If it's an authentication error, you might want to redirect to login page
-                if (error.message.includes('Unauthorized')) {
-                    setTimeout(() => {
-                        window.location.href = '/login'; // Adjust this URL as needed
-                    }, 3000); // Redirect after 3 seconds
-                }
+                window.errorDisplayForChatPane(error);
             });
         }
         else

@@ -149,6 +149,14 @@ window.buildDynamicURL= function(threadId, queryIds, json, justQueryIds=null) {
 //     }
 // }
 
+// function renderMarkdownLastResponse()
+// {
+//     console.log("render markdown last response");
+//     const responseElements = document.querySelectorAll('.markdown-body');
+//     const lastReponseElement = responseElements[responseElements.length - 1];
+//     lastReponseElement.innerHTML = marked.parse(lastReponseElement.textContent);
+// }
+
 function sendQuery() {
     const userInput = document.getElementById('user-input').value;
 
@@ -240,13 +248,14 @@ function normalReplyBuilder(userInput, queryIdsList, justQueryIds = null, lastQu
         body: JSON.stringify({ query_text: { query: userInput } })
     })
     .then(response => {
-        if (response.status === 401) {
-            throw new Error('Unauthorized: Please log in again.');
+        if (response.ok) 
+        {
+            return response.json();
+        } 
+        else 
+        {
+            throw response;
         }
-        // if (!response.ok) {
-        //     throw new Error('Network response was not ok');            
-        // }
-        return response.json();
     })
     .then(data => {
         console.log(data);
@@ -258,7 +267,7 @@ function normalReplyBuilder(userInput, queryIdsList, justQueryIds = null, lastQu
         lastConversationUnitElement.innerHTML += `
             <div class="response-container">
                 <div class="response">
-                    <div id="response-text" class="markdown-body">${lastConversationUnit.response}</div>
+                    <div id="response-text" class="markdown-body">${marked.parse(lastConversationUnit.response)}</div>
                 </div>
                 <div class="sources">
                     ${lastConversationUnit.search_results && lastConversationUnit.search_results.length > 0 ? 
@@ -271,7 +280,7 @@ function normalReplyBuilder(userInput, queryIdsList, justQueryIds = null, lastQu
             </div>
         `;
 
-        renderMarkdown();
+        
         console.log("latest_quest_id",lastConversationUnit.query_id);
         history.pushState(null, '', `/thread?thread_id=${threadId}&query_id=${lastConversationUnit["query_id"]}`);
         console.log(lastConversationUnit.parent_query_ids);
@@ -283,27 +292,11 @@ function normalReplyBuilder(userInput, queryIdsList, justQueryIds = null, lastQu
         {
             window.addNode(lastConversationUnit.parent_query_ids[0], lastConversationUnit.query_id, false, lastConversationUnit.query, lastConversationUnit.response);
         }
+        // renderMarkdownLastResponse();
         window.scrollToQuery();
     })
     .catch((error) => {
-        console.error('Error:', error);
-
-        // Display error message to user
-        let chatPane = document.querySelector('.chat-pane');
-        chatPane.innerHTML = `
-            <div class="error-message">
-                <h2>An error occurred</h2>
-                <p>${error.message}</p>
-                <button onclick="location.reload()">Try Again</button>
-            </div>
-        `;
-        
-        // If it's an authentication error, you might want to redirect to login page
-        if (error.message.includes('Unauthorized')) {
-            setTimeout(() => {
-                window.location.href = '/login'; // Adjust this URL as needed
-            }, 3000); // Redirect after 3 seconds
-        }
+        window.errorDisplayForChatPane(error);
     });
 }
 
@@ -320,13 +313,14 @@ function mergedReplyBuilder(userInput, queryIdsList, justQueryIds)
         headers: { 'Content-Type': 'application/json' }
     })
     .then(response => {
-        if (response.status === 401) {
-            throw new Error('Unauthorized: Please log in again.');
+        if (response.ok)
+        {
+            return response.json();
+        } 
+        else
+        {
+            throw response;
         }
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
     })
     .then(data => {
         let chatPane = document.querySelector('.chat-pane');
@@ -341,22 +335,7 @@ function mergedReplyBuilder(userInput, queryIdsList, justQueryIds)
         normalReplyBuilder(userInput, queryIdsList, justQueryIds, lastQueries);
     })
     .catch(error => {
-        console.error('Error:', error);
-
-        // Display error message to user
-        let chatPane = document.querySelector('.chat-pane');
-        chatPane.innerHTML = `
-            <div class="error-message">
-                <h2>An error occurred</h2>
-                <p>${error.message}</p>
-                <button onclick="location.reload()">Try Again</button>
-            </div>
-        `;
-        
-        // If it's an authentication error, you might want to redirect to login page
-        if (error.message.includes('Unauthorized')) {
-            window.location.href = '/login'; // Adjust this URL as needed
-        }
+        window.errorDisplayForChatPane(error);
     });
 }
 

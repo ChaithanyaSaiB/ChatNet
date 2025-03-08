@@ -10,6 +10,7 @@ from fastapi.templating import Jinja2Templates
 from app.core.templates import templates
 from app.core.database import Base, engine
 from app.utils.api_error import APIError
+from app.utils.groq_api_exception import GroqAPIException
 from app.utils.langchain_utils import create_agent
 from app.models.user import User
 from app.models.thread import Thread
@@ -44,17 +45,60 @@ app.include_router(user_access.router)
 app.include_router(thread_calls.router)
 
 
-@app.exception_handler(APIError)
-async def api_error_handler(request: Request, exc: APIError):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"error": exc.message}
-    )
+# @app.exception_handler(APIError)
+# async def api_error_handler(request: Request, exc: APIError):
+#     return JSONResponse(
+#         status_code=exc.status_code,
+#         content={"error": exc.message}
+#     )
+
+# @app.exception_handler(HTTPException)
+# async def http_exception_handler(request: Request, exc: HTTPException):
+#     status_code = exc.status_code
+#     detail = exc.detail
+
+#     return templates.TemplateResponse(
+#         "error.html",
+#         {
+#             "request": request,
+#             "status_code": status_code,
+#             "detail": detail
+#         },
+#         status_code=status_code
+#     )
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     return templates.TemplateResponse(
         "error.html",
-        {"request": request, "status_code": exc.status_code, "detail": exc.detail},
+        {
+            "request": request,
+            "status_code": exc.status_code,
+            "detail": exc.detail
+        },
+        status_code=exc.status_code
+    )
+
+@app.exception_handler(GroqAPIException)
+async def groq_api_exception_handler(request: Request, exc: GroqAPIException):
+    return templates.TemplateResponse(
+        "error.html",
+        {
+            "request": request,
+            "status_code": exc.status_code,
+            "detail": exc.message,
+        },
+        status_code=exc.status_code
+    )
+
+@app.exception_handler(APIError)
+async def api_error_handler(request: Request, exc: APIError):
+    return templates.TemplateResponse(
+        "error.html",
+        {
+            "request": request,
+            "status_code": exc.status_code,
+            "detail": exc.message
+        },
         status_code=exc.status_code
     )

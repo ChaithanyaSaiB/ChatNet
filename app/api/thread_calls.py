@@ -65,12 +65,12 @@ def get_thread(
         # conversation_history = conversation_manager.get_multiple_query_conversation_history(query_ids=query_id, just_query_ids=[])
         if json_response_format:
             query_id_copy = query_id.copy()
-            print("conversation history",aggregate_history)
-            for conversation_unit in aggregate_history:
-                print(conversation_unit["query_id"])
-                print(conversation_unit["query"])
-                print(conversation_unit["parent_queries"])
-                print("")
+            # print("conversation history",aggregate_history)
+            # for conversation_unit in aggregate_history:
+            #     print(conversation_unit["query_id"])
+            #     print(conversation_unit["query"])
+            #     print(conversation_unit["parent_queries"])
+            #     print("")
             html_content = templates.get_template("chat_pane.html").render(
                 request=request,
                 thread_id=thread_id,
@@ -129,6 +129,7 @@ async def post_thread(
     print("query id is",query_id)
     print("justqueryids are", just_query_id)
     print(aggregate_history)
+    # try:
     updated_conversation_history = conversation_manager.create_query_with_response(
         thread_id=thread_id,
         user_id=user.user_id,
@@ -137,6 +138,8 @@ async def post_thread(
         parent_query_ids=query_id,
         history_not_included = just_query_id
     )
+    # except Exception as e:
+    #     raise e
     return JSONResponse(content={
         "thread_id": thread_id,
         "query_id": updated_conversation_history[-1]["query_id"],
@@ -171,5 +174,5 @@ def signup(request: Request):
     return templates.TemplateResponse("signup.html", {"request": request})
 
 @router.get("/")
-def newchat(request: Request):
+def newchat(request: Request, user: User = Depends(get_current_user)):
     return templates.TemplateResponse("new_thread.html", {"request": request})

@@ -2,6 +2,7 @@ from langgraph.graph import StateGraph, START, END
 from app.models.pydantic_models import State
 from app.core.llm_config import tool_node
 from app.core.llm_config import llm, tavily_search
+from app.utils.groq_api_exception import GroqAPIException
 from langchain_core.messages import SystemMessage
 from typing import Literal
 
@@ -31,7 +32,24 @@ def call_model(state: State):
     system_message = SystemMessage(content=system_prompt.replace('\n',''))
     messages = [system_message] + messages
 
-    response = llm.invoke(messages)
+    try:
+        response = llm.invoke(messages)
+    except Exception as e:
+        message = str(e)
+        status_code = getattr(e, 'status_code', 400)
+
+        if hasattr(e, 'response') and hasattr(e.response, 'json'):
+            try:
+                api_error = e.response.json().get('error', {})
+                message = api_error.get('message', message)
+            except ValueError:
+                pass  # JSON decoding failed
+        
+        raise GroqAPIException(
+            message=message,
+            status_code=status_code
+        )
+
     print("Call model's response:", response)
     return {"messages": [response]}
 
