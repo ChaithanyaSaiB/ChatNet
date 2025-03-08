@@ -91,33 +91,3 @@ function multipleSelectionChanged(queryId) {
         errorDisplayForChatPane(error);
     });
 }
-
-window.errorDisplayForChatPane = function(error) {
-    if (error instanceof Response) 
-    {
-        console.log("entered error display for chat pane");
-        console.log(error);
-        // It's an HTTP error, likely containing HTML
-        error.text().then(errorHtml => {
-            let chatPane = document.querySelector('.chat-pane');
-            chatPane.innerHTML = errorHtml;
-
-            const scripts = chatPane.querySelectorAll('script');
-            scripts.forEach(script => {
-                const newScript = document.createElement('script');
-                newScript.textContent = script.textContent; // Copy script content
-                document.body.appendChild(newScript); // Append it to the body
-                document.body.removeChild(newScript); // Clean up after execution
-            });
-
-            const statusCode = error.status;
-            errorComponent.init(statusCode);
-        });
-    }
-    else 
-    {
-        // It's a different kind of error
-        let chatPane = document.querySelector('.chat-pane');
-        chatPane.textContent = 'An unexpected error occurred: ' + error.message;
-    }
-}
