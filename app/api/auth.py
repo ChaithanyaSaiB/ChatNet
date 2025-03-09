@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status, Response
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from app.core.templates import templates
 from app.models.user import User
 from app.models.pydantic_models import UserCreate
 from app.services.user_manager import UserManager
@@ -12,6 +13,19 @@ from datetime import timedelta
 import os
 
 router = APIRouter()
+
+@router.get("/login")
+def login(request: Request):
+    """
+    Render a page for letting user login to their account.
+    
+    Parameters:
+      - request: The HTTP request object.
+    
+    Returns:
+      - A template response for the login page.
+    """
+    return templates.TemplateResponse("login.html", {"request": request})
 
 @router.post("/token")
 def logging_in_user(
@@ -47,7 +61,20 @@ def logging_in_user(
         # secure=True  # Uncomment for HTTPS environments
     )
     return response
+
+@router.get("/signup")
+def signup(request: Request):
+    """
+    Render signup page for letting user signup.
     
+    Parameters:
+      - request: The HTTP request object.
+    
+    Returns:
+      - A template response for the signup page.
+    """
+    return templates.TemplateResponse("signup.html", {"request": request})
+
 @router.post("/signup")
 def signing_up_user(
         user: UserCreate,
