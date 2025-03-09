@@ -3,7 +3,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, func
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
-from app.api import chat, user_access, thread_calls
+from app.api import auth, conversations, threads
 import os
 from contextlib import asynccontextmanager
 from fastapi.templating import Jinja2Templates
@@ -40,32 +40,9 @@ static_folder = os.path.join(project_root, "static")
 app.mount("/static", StaticFiles(directory=static_folder), name="static")
 
 
-app.include_router(chat.router)
-app.include_router(user_access.router)
-app.include_router(thread_calls.router)
-
-
-# @app.exception_handler(APIError)
-# async def api_error_handler(request: Request, exc: APIError):
-#     return JSONResponse(
-#         status_code=exc.status_code,
-#         content={"error": exc.message}
-#     )
-
-# @app.exception_handler(HTTPException)
-# async def http_exception_handler(request: Request, exc: HTTPException):
-#     status_code = exc.status_code
-#     detail = exc.detail
-
-#     return templates.TemplateResponse(
-#         "error.html",
-#         {
-#             "request": request,
-#             "status_code": status_code,
-#             "detail": detail
-#         },
-#         status_code=status_code
-#     )
+app.include_router(auth.router)
+app.include_router(threads.router)
+app.include_router(conversations.router)
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):

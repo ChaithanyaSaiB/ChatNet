@@ -19,6 +19,10 @@ def logging_in_user(
         form_data: OAuth2PasswordRequestForm = Depends(), 
         manager: UserManager = Depends(get_user_manager)
     ):
+    """
+    Authenticate the user and generate an access token.
+    Sets a session cookie for the authenticated user.
+    """
     user = manager.authenticate_user(username=form_data.username, password=form_data.password)
     if not user:
         raise HTTPException(
@@ -39,23 +43,21 @@ def logging_in_user(
         httponly=True, 
         max_age=access_token_expire_minutes * 60,
         expires=access_token_expire_minutes * 60,
-        samesite="lax",  # Add this for better security
-        # secure=True  # Add this if using HTTPS
+        samesite="lax",
+        # secure=True  # Uncomment for HTTPS environments
     )
     return response
-    # return {"access_token": access_token, "token_type": "bearer"}
-    
-
-    # access_token = create_access_token(data={"username": user.username, "user_id": user.user_id})
-    # print("access token in login",access_token)
-    # return JSONResponse(content={"message": "Login successful"}, status_code=status.HTTP_200_OK)
     
 @router.post("/signup")
 def signing_up_user(
         user: UserCreate,
         manager: UserManager = Depends(get_user_manager)
     ):
-    retrieved_user =  manager.get_user_by_username(username=user.username)
+    """
+    Create a new user account.
+    Returns an error if the username already exists.
+    """
+    retrieved_user = manager.get_user_by_username(username=user.username)
     if retrieved_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -67,6 +69,9 @@ def signing_up_user(
 
 @router.get("/me")
 def get_current_user(request: Request, user: User = Depends(get_current_user)):
+    """
+    Retrieve information about the currently authenticated user.
+    """
     return {
         "user_id": user.user_id,
         "username": user.username,
@@ -75,5 +80,8 @@ def get_current_user(request: Request, user: User = Depends(get_current_user)):
 
 @router.post("/logout")
 def logout(response: Response):
+    """
+    Log out the current user by clearing the session cookie.
+    """
     response.delete_cookie(key="session")
     return {"message": "Logged out successfully"}
