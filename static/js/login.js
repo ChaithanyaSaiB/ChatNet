@@ -1,13 +1,15 @@
-// function setCookie(name, value, minutes) {
-//     const date = new Date();
-//     date.setTime(date.getTime() + (minutes * 60 * 1000)); // Add expiration time in minutes
-//     const expires = "expires=" + date.toUTCString(); // Convert to UTC string format
-
-//     // Set the cookie
-//     document.cookie = `${name}=${value};${expires};path=/`;
-// }
+/**
+ * @file This script handles user authentication by processing the login form submission.
+ */
 
 document.addEventListener('DOMContentLoaded', function() {
+    /**
+     * Event listener for the login form submission.
+     * Handles the submission by preventing the default action, collecting user inputs,
+     * sending a POST request to the '/token' endpoint, and processing the response.
+     *
+     * @param {Event} e - The submit event.
+     */
     const form = document.querySelector('form');
     form.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -42,8 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .then(data => {
-            // setCookie("access_token", data.access_token, 30);  // Store token
-            window.location.href = "/";  // Redirect to dashboard
+            window.location.href = "/";
         })
         .catch(error => {
             console.error('Error:', error);

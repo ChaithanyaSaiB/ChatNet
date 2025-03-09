@@ -1,10 +1,18 @@
+/**
+ * @file This script handles new thread creation by processing user input from the chat interface.
+ */
+
 document.addEventListener('DOMContentLoaded', function() {
     const sendButton = document.getElementById('send-button');
 
+    /**
+     * Processes user input and initiates new thread creation.
+     * Validates input, sends POST request to '/new_thread', and handles response/errors.
+     * Clears input field after submission and manages redirects/error display.
+     */
     function processInput() {
         const userInput = document.getElementById('user-input').value;
-        if (userInput != "")
-        {
+        if (userInput != "") {
             document.getElementById('user-input').value = '';
             fetch('/new_thread', {
                 method: 'POST',
@@ -20,34 +28,33 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = response.url;
                 } else {
                     if (response.status === 401) {
-                        throw response; // Throw the response as is for unauthorized errors
+                        throw response;
                     } else {
-                        // For all other errors, prepend a message and include the original error details
                         return response.text().then(errorText => {
                             let errorMessage = "Failed to create new thread. ";
                             try {
-                                // Try to parse the error text as JSON
                                 const errorJson = JSON.parse(errorText);
                                 errorMessage += errorJson.detail || errorText;
                             } catch (e) {
-                                // If parsing fails, use the error text as is
                                 errorMessage += errorText;
                             }
                             throw new Error(errorMessage);
                         });
                     }
                 }
-                
             })
             .catch(error => {
                 window.errorDisplayForChatPane(error);
             });
         }
-        else
-        {
+        else {
             alert("OOPS! We need something to start the conversation..");
         }
-        
     }
+
+    /**
+     * Event listener for send button clicks.
+     * Triggers the thread creation process when the button is clicked.
+     */
     sendButton.addEventListener('click', processInput);
 });

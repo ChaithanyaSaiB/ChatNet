@@ -1,4 +1,9 @@
 /* Styles the container for a group of conversations */
+#merge-state-title {
+    align-self: center;
+    margin: 10px;
+}
+
 .conversation-group {
     border: 1px solid #ddd;
     margin-bottom: 20px;

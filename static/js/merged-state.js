@@ -1,31 +1,22 @@
-// function buildDynamicURL(threadId, queryIds, justqueryIdsList, json) {
-//     const baseURL = '/thread?thread_id=' + threadId;
-//     let queryParams = '';
-
-//     if (Array.isArray(queryIds)) {
-//         // If queryIds is an array, handle multiple query IDs
-//         queryParams = queryIds.map(id => 'query_id=' + id).join('&');
-//     } else if (queryIds !== undefined && queryIds !== null) {
-//         // If queryIds is a single value (and not undefined or null), handle single query ID
-//         queryParams = 'query_id=' + queryIds;
-//     } else {
-//         console.error('Invalid query ID(s) provided:', queryIds);
-//     }
-
-//     if (json) {
-//         return baseURL + (queryParams ? '&' + queryParams : '') + '&json_response_format=true';
-//     } else {
-//         return baseURL + (queryParams ? '&' + queryParams : '');
-//     }
-// }
+/**
+ * @file This script manages the selection, expansion, and collapsing of conversation groups in a thread.
+ */
 
 document.addEventListener('DOMContentLoaded', function () {
+    /**
+     * Sets up event listeners for the selection checkboxes of conversation groups.
+     * When a checkbox is toggled, it updates the visibility of conversation units within that group
+     * and adjusts the 'just_query_ids' hidden input field accordingly.
+     */
     window.selectCheckBoxesEventListener = function () {
         const hiddenInput = document.querySelector('input[name="just_query_ids"]');
         const selectGroupCheckboxes = document.querySelectorAll('.select-group');
         const groups = document.querySelectorAll('.conversation-group');
 
-        // Function to update the `just_query_ids` value
+        /**
+         * Updates the value of the 'just_query_ids' hidden input field.
+         * This field contains a comma-separated list of query IDs from the last units of unselected groups.
+         */
         function updateJustQueryIds() {
             let justQueryIds = [];
             groups.forEach((group, index) => {
@@ -38,7 +29,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
             hiddenInput.value = justQueryIds.join(',');
-            console.log(`Updated just_query_ids: ${hiddenInput.value}`);
         }
 
         // Add event listeners to each checkbox
@@ -100,13 +90,16 @@ document.addEventListener('DOMContentLoaded', function () {
         updateJustQueryIds();
     };
 
+    /**
+     * Sets up event listeners for the "Expand All" buttons in conversation groups.
+     * When clicked, all non-last conversation units are moved to an expanded container and made visible.
+     */
     window.expandAllButtonEventListener = function () {
         // Handle Expand All button click
         const expandButtons = document.querySelectorAll('.expand-button');
         expandButtons.forEach(function (button) {
             button.addEventListener('click', function (event) {
                 event.preventDefault();
-                console.log("Expand All clicked");
                 const groupIndex = this.dataset.groupIndex;
                 const group = document.querySelector(`.conversation-group:nth-child(${parseInt(groupIndex) + 1})`);
                 const stickyControls = group.querySelector('.sticky-controls');
@@ -134,13 +127,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     };
 
+    /**
+     * Sets up event listeners for the "Collapse All" buttons in conversation groups.
+     * When clicked, all previously expanded conversation units are moved back to the collapsed container and hidden.
+     */
     window.collapseAllButtonEventListener = function () {
         // Handle Collapse All button click
         const collapseButtons = document.querySelectorAll('.collapse-button');
         collapseButtons.forEach(function (button) {
             button.addEventListener('click', function (event) {
                 event.preventDefault();
-                console.log("Collapse All clicked");
                 const groupIndex = this.dataset.groupIndex;
                 const group = document.querySelector(`.conversation-group:nth-child(${parseInt(groupIndex) + 1})`);
 
