@@ -4,27 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChatNet - Signup</title>
+    <!-- External CSS file for styling the signup page -->
     <link rel="stylesheet" href="static/css/credentials-page.css">
 </head>
 <body>
-
+    <!-- Header section with the application title -->
     <div class="header" id="chatnet-title">ChatNet</div>
 
+    <!-- Main content area -->
     <div class="main">
+        <!-- Container for the signup form -->
         <div class="form-container">
             <h2>Sign Up</h2>
+            <!-- Signup form -->
             <form>
+                <!-- Username input field -->
                 <input type="text" placeholder="Username" required>
+                
+                <!-- Password input field -->
                 <input type="password" placeholder="Password" required>
+                
+                <!-- Confirm password input field -->
                 <input type="password" placeholder="Confirm Password" required>
+                
+                <!-- Submit button for the form -->
                 <button type="submit">Sign Up</button>
             </form>
+            <!-- Link to login page for users who already have an account -->
             <p class="switch-link">Already have an account? <a href="login">Login here</a>.</p>
         </div>
     </div>
 
+    <!-- Footer section (currently empty) -->
     <div class="footer"></div>
-    <script src="static/js/signup.js"></script>
 
+    <!-- External JavaScript file for signup functionality -->
+    <script src="static/js/signup.js"></script>
 </body>
 </html>

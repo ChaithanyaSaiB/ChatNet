@@ -1,16 +1,21 @@
 {% extends "base.html" %}
+<!-- Extends the base template -->
 
 {% block extra_css %}
-<link rel="stylesheet" href="static/css/new-thread-chat-pane.css">
+    <!-- Additional CSS specific to the new thread chat pane -->
+    <link rel="stylesheet" href="static/css/new-thread-chat-pane.css">
 {% endblock %}
 
 {% block chat_pane %}
-<div class="user-input-container">
-    <textarea id="user-input" placeholder="Type your query here" autofocus></textarea>
-    <button id="send-button">Send</button>
-</div>
+    <!-- Chat pane content for the new thread -->
+    <div class="user-input-container">
+        <!-- Container for user input (textarea and send button) -->
+        <textarea id="user-input" placeholder="Type your query here" autofocus></textarea>
+        <button id="send-button">Send</button>
+    </div>
 {% endblock %}
 
 {% block extra_js %}
-<script src="static/js/new-thread.js"></script>
+    <!-- Additional JavaScript for handling new thread functionality -->
+    <script src="static/js/new-thread.js"></script>
 {% endblock %}

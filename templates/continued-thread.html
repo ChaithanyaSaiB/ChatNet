@@ -1,15 +1,19 @@
 {% extends "base.html" %}
+<!-- Extends the base template -->
 
 {% block extra_css %}
-<link rel="stylesheet" href="static/css/merged-conversation-unit.css">
+    <!-- Additional CSS specific to this page -->
+    <link rel="stylesheet" href="static/css/merged-conversation-unit.css">
 {% endblock %}
 
 {% block chat_pane %}
+    <!-- Includes the chat pane template -->
     {% include "chat_pane.html" %}
 {% endblock %}
 
 {% block extra_js %}
-<script src="static/js/new-query-processing.js"></script>
-<script src="static/js/merged-state.js"></script>
-<script src="static/js/query-navigation.js"></script>
+    <!-- Additional JavaScript files specific to this page -->
+    <script src="static/js/new-query-processing.js"></script>
+    <script src="static/js/merged-state.js"></script>
+    <script src="static/js/query-navigation.js"></script>
 {% endblock %}

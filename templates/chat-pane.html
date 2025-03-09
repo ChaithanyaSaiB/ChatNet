@@ -1,5 +1,10 @@
+<!-- Hidden input field to store the current thread ID -->
 <input type="hidden" name="thread_id" value="{{ thread_id }}">
+
+<!-- Hidden input field to store a comma-separated list of query IDs -->
 <input type="hidden" name="query_id" value="{{ query_id|join(', ') }}">
+
+<!-- Hidden input field reserved for future use (currently empty) -->
 <input type="hidden" name="just_query_ids" value="">
 
 {% set query_ids = (query_id if query_id is iterable and query_id is not string else [query_id]) %}
@@ -10,18 +15,28 @@
     target_index=0
 ) %}
 
+{# Initialization of variables using Jinja templating engine.
+    - `query_ids`: Converts `query_id` into a list if it's not already one.  This ensures consistency for later processing.
+    - `groups`:  An empty list to store conversation groups.
+    - `ns`: A namespace object to manage state within the Jinja template loop (current group and target index).
+#}
+
 {% for conversation_unit in conversation_history %}
     {% set _ = ns.current_group.append(conversation_unit) %}
-    
+
+    {# Appends the current conversation unit to the current group.
+        The `conversation_history` variable is assumed to be passed from the backend, containing all the conversation turns.
+    #}
+
     {# Only check if we still have targets to find #}
     {% if ns.target_index < query_ids|length %}
         {% set current_target = query_ids[ns.target_index] %}
-        
+
         {% if conversation_unit.query_id == current_target %}
             {# Store temp index to modify namespace #}
             {% set new_index = ns.target_index + 1 %}
             {% set ns.target_index = new_index %}
-            
+
             {# Finalize current group #}
             {% set _ = groups.append(ns.current_group) %}
             {% set ns.current_group = [] %}
@@ -29,30 +44,40 @@
     {% endif %}
 {% endfor %}
 
+{# This section iterates through the conversation history and groups conversation units based on matching `query_id` values.
+    - If the current conversation unit's `query_id` matches the current target `query_id`, it finalizes the current group and starts a new group.
+    - This grouping logic seems to be related to merging or organizing conversation history.
+#}
+
 {# Add any remaining units #}
 {% if ns.current_group %}
     {% set _ = groups.append(ns.current_group) %}
 {% endif %}
 
-
-
+{# Adds any remaining conversation units to the `groups` list.  This ensures that no conversation units are left out, even if they don't match a target `query_id`. #}
 
 <div id="chat-area">
+    <!-- Main container for the chat interface -->
     {% if groups|length > 1 %}
+    <!-- If there are multiple conversation groups -->
     <h2 id="merge-state-title">Merge State</h3>
         {% for group in groups %}
             <div class="conversation-group">
+                <!-- Represents a group of conversation units -->
                 {% if group|length > 1 %}
                 <div class="sticky-controls">
+                    <!-- Sticky controls for the conversation group (appears when there are multiple conversation units) -->
                     <div class="group-toggle">
+                        <!-- Toggle switch to include/exclude the history of the conversation group -->
                         <label class="switch">
                             <input type="checkbox" class="select-group" data-group-index="{{ loop.index0 }}" checked>
                             <span class="slider round"></span>
                         </label>
                         <span class="toggle-label">Include History</span>
                     </div>
-                    
+
                     <div class="expand-toggle">
+                        <!-- Expand/collapse toggle to show/hide the conversation history -->
                         <a href="#" class="expand-button" data-group-index="{{ loop.index0 }}" style="display: inline-block;">
                             Show History
                         </a>
@@ -60,12 +85,16 @@
                             Hide History
                         </a>
                     </div>
-                </div>            
+                </div>
+
             {% endif %}
             <div class="collapsed-units">
+                <!-- Contains the collapsed conversation units (all except the last one) -->
                 {% for conversation_unit in group[:-1] %}
                 <div class="conversation-unit collapsed">
+                    <!-- A single conversation unit -->
                     <div class="query-container">
+                        <!-- Container for the user's query -->
                         <div class="query">
                             <h2 id="query-title">{{ conversation_unit["query"] }}</h2>
                             <div class="query_id" data-value="{{ conversation_unit['query_id'] }}"></div>
@@ -73,10 +102,12 @@
                         </div>
                     </div>
                     <div class="response-container">
+                        <!-- Container for the response from the system -->
                         <div class="response">
                             <div id="response-text" class="markdown-body">{{ conversation_unit["response"] }}</div>
                         </div>
                         <div class="sources">
+                            <!-- Container for the sources of information -->
                             {% if conversation_unit["search_results"] != [] %}
                             <h5 class="sources-title">Sources</h5>
                             {% endif %}
@@ -88,10 +119,11 @@
                 </div>
                 {% endfor %}
             </div>
-            
+
             {% if group %}
             {% set last_conversation_unit = group[-1] %}
             <div class="conversation-unit last">
+                <!-- The last conversation unit in the group (always expanded) -->
                 <div class="query-container">
                     <div class="query">
                         <h2 id="query-title">{{ last_conversation_unit["query"] }}</h2>
@@ -120,6 +152,7 @@
         {% for group in groups %}
             {% for conversation_unit in group %}
             <div class="conversation-unit">
+                <!-- If there is only one group, displays all conversation units without collapsing -->
                 <div class="query-container">
                     <div class="query">
                         <h2 id="query-title">{{ conversation_unit["query"] }}</h2>
@@ -144,7 +177,8 @@
                                     </li>
                                 {% endfor %}
                             </ol>
-                        </div>                                       
+                        </div>
+
                     {% endif %}
                 </div>
                 <div class="response-container">
@@ -166,6 +200,7 @@
     {% endif %}
 </div>
 <div class="user-input-area">
+    <!-- Area for user input -->
     <textarea id="user-input" placeholder="Type your query here" autofocus></textarea>
     <button id="send-button" onclick="sendQuery()">Send</button>
 </div>

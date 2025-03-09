@@ -1,27 +1,39 @@
 <div id="error-component" class="error-container">
+    <!-- Main container for displaying error information -->
     <h1>⚠️ Something Went Wrong</h1>
+    <!-- Main heading for the error page -->
     <p>Error Code: <span id="error-code">{{ status_code }}</span></p>
+    <!-- Displays the HTTP status code -->
     <p id="error-detail">{{ detail }}</p>
-    
+    <!-- Displays detailed error information -->
+
     <div id="error-401-content" style="display: none;">
+        <!-- Content for 401 Unauthorized errors -->
         <p>Redirecting to login page in <span id="countdown">3</span> seconds...</p>
     </div>
+
     <div id="error-413-content" style="display: none;">
-        <p>Extremely sorry. Since there is no context builder for this app we are hitting the limit of content that LLM can process. Please create a new thread to have a conversation or choose smaller history content to continue in the same thread</p>
+        <!-- Content for 413 Payload Too Large errors -->
+        <p>We are hitting the limit of content that LLM can process. Please create a new thread or choose smaller history content.</p>
         <button onclick="errorComponent.reloadPage()">Reload Page</button>
     </div>
+
     <div id="error-other-content" style="display: none;">
-        <p>Please try again later or return home</p>
+        <!-- Content for other error codes -->
+        <p>Please try again later or reload the page.</p>
         <button onclick="errorComponent.reloadPage()">Reload Page</button>
     </div>
 </div>
 
+
 <script>
     const errorComponent = {
+        // ErrorComponent object manages error page behavior
         init: function(statusCode) {
+            // Initialize the component with the given status code
             this.statusCode = statusCode;
             document.getElementById('error-code').textContent = statusCode;
-            
+
             if (statusCode == 401) {
                 document.getElementById('error-401-content').style.display = 'block';
                 this.startCountdown();
@@ -35,6 +47,7 @@
             }
         },
         startCountdown: function() {
+            // Start a 3-second countdown for redirection
             let seconds = 3;
             const countdownElement = document.getElementById('countdown');
             const countdownInterval = setInterval(() => {
@@ -47,21 +60,25 @@
             }, 1000);
         },
         routeToLogin: function() {
+            // Redirect to the login page
             window.location.href = "/login";
         },
         routeToHome: function() {
+            // Redirect to the home page
             window.location.href = "/";
         },
         reloadPage: function() {
+            // Reload the current page
             location.reload();
         }
     };
 
-    // Initialize the component
+    // Initialize the component with the server-provided status code
     errorComponent.init(parseInt("{{ status_code }}"));
 </script>
 
 <style>
+    /* Main container for the error component */
     .error-container {
         font-family: Arial, sans-serif;
         max-width: 800px;
@@ -72,6 +89,8 @@
         background: #ffecec;
         border: 1px solid #ffb3b3;
     }
+
+    /* Buttons inside the error container */
     .error-container button {
         padding: 0.8rem 1.5rem;
         background: #007bff;
@@ -81,6 +100,8 @@
         cursor: pointer;
         margin: 1rem;
     }
+
+    /* Button hover effect */
     .error-container button:hover {
         background: #0056b3;
     }
