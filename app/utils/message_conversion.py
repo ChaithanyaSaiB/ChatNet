@@ -1,18 +1,5 @@
 from langchain_core.messages import HumanMessage, AIMessage
 
-# def get_langchain_messages(conversation_history:list[dict]):
-#     messages = []
-#     for conversation_unit in conversation_history:
-#         if conversation_unit['query'] == "Initial Merge Message":
-#             messages += [HumanMessage(content="This is a merge request where multiple conversations are being passed together to answer a query")]
-#         elif conversation_unit['query'] == "Conversation Start":
-#             messages += [HumanMessage(content="The below is a independent conversation")]
-#         else:
-#             messages += [HumanMessage(content=conversation_unit['query'])]
-#             if "response" in conversation_unit:
-#                 messages += [AIMessage(content=conversation_unit['response'])]
-#     return messages
-
 def get_langchain_messages(conversation_history: list[dict]):
     messages = []
     for conversation_unit in conversation_history:
