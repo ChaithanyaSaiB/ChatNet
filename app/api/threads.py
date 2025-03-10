@@ -9,9 +9,9 @@ from app.services.conversation_manager import ConversationManager
 from app.utils.dependency_injectors import get_thread_manager, get_conversation_manager
 from app.core.templates import templates
 
-router = APIRouter()
+router = APIRouter(tags=["Thread Level Activities"])
 
-@router.post("/list_threads")
+@router.post("/list_threads", summary="List all threads created by the specified user")
 def list_threads(
         request: Request,
         userId: UserId, 
@@ -20,16 +20,18 @@ def list_threads(
     ):
     """
     List all threads created by the specified user.
-    
+
     Parameters:
-      - userId: The ID of the user whose threads are to be listed.
-    
+        userId (UserId): The ID of the user whose threads are to be listed.
+        thread_manager (ThreadManager): The manager responsible for handling thread operations.
+        user (User): The currently authenticated user.
+
     Returns:
-      - A list of threads associated with the given user ID.
+        list: A list of threads associated with the given user ID.
     """
     return thread_manager.list_threads(user_id=userId.user_id)
 
-@router.post("/new_thread")
+@router.post("/new_thread", summary="Create a new thread and initialize it with a query")
 def creating_thread(
         request: Request,
         query_text: QueryText,
@@ -39,12 +41,15 @@ def creating_thread(
     ):
     """
     Create a new thread and initialize it with a query.
-    
+
     Parameters:
-      - query_text: The initial query text for the thread.
-    
+        query_text (QueryText): The initial query text for the thread.
+        thread_manager (ThreadManager): The manager responsible for handling thread creation.
+        conversation_manager (ConversationManager): The manager responsible for handling conversations within threads.
+        user (User): The currently authenticated user.
+
     Returns:
-      - Redirects to the newly created thread's page.
+        RedirectResponse: Redirects to the newly created thread's page.
     """
     new_thread_id = thread_manager.create_thread(
         user_id=user.user_id,
@@ -57,15 +62,15 @@ def creating_thread(
     )
     return RedirectResponse(url=f"/thread?thread_id={new_thread_id}", status_code=303)
 
-@router.get("/")
+@router.get("/", summary="Rendering a page to start a new chat thread")
 def newchat(request: Request, user: User = Depends(get_current_user)):
     """
     Render a page for starting a new chat thread.
-    
+
     Parameters:
-      - request: The HTTP request object.
-    
+        user (User): The currently authenticated user.
+
     Returns:
-      - A template response for the new chat page.
+        TemplateResponse: A template response for the new chat page.
     """
     return templates.TemplateResponse("new-thread.html", {"request": request})

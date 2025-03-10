@@ -10,9 +10,9 @@ from app.services.conversation_manager import ConversationManager
 from app.utils.dependency_injectors import get_conversation_manager
 from app.core.templates import templates
 
-router = APIRouter()
+router = APIRouter(tags=["Conversation Level Activities"])
 
-@router.post("/thread_conversation_history")
+@router.post("/thread_conversation_history", summary="Retrieving conversations in a specific thread")
 def thread_conversations(
     request: Request,
     thread_id: int = fastapi_query(..., description="The ID of the thread"),
@@ -23,7 +23,7 @@ def thread_conversations(
     Retrieve the full conversation history for a given thread ID.
 
     Parameters:
-      - thread_id_model (ThreadId): The thread ID model containing the thread ID.
+      - thread_id (int): The thread ID model containing the thread ID.
       - conversation_manager (ConversationManager): Dependency to manage conversations.
       - user (User): The authenticated user making the request.
 
@@ -36,7 +36,7 @@ def thread_conversations(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/thread")
+@router.get("/thread", summary="Retrieving latest query's history or specific query's history")
 def get_thread(
     request: Request,
     thread_id: int = fastapi_query(..., description="The ID of the thread"),
@@ -107,7 +107,7 @@ def get_thread(
             )
 
 
-@router.post("/thread")
+@router.post("/thread", summary="Adding a new normal or merged followup query")
 async def post_thread(
     request: Request,
     query_text: QueryText,

@@ -12,7 +12,7 @@ from app.core.authorization import get_current_user
 from datetime import timedelta
 import os
 
-router = APIRouter()
+router = APIRouter(tags=["User Authentication And Retrieval"])
 
 @router.get("/login")
 def login(request: Request):
@@ -36,6 +36,14 @@ def logging_in_user(
     """
     Authenticate the user and generate an access token.
     Sets a session cookie for the authenticated user.
+
+    Parameters:
+        response (Response): The response object to set cookies.
+        form_data (OAuth2PasswordRequestForm): The username and password from the form.
+        manager (AuthenticationManager): The authentication manager instance.
+
+    Returns:
+        JSONResponse: A JSON response containing a success message and sets a session cookie.
     """
     user = manager.authenticate_user(username=form_data.username, password=form_data.password)
     if not user:
@@ -83,6 +91,13 @@ def signing_up_user(
     """
     Create a new user account.
     Returns an error if the username already exists.
+
+    Parameters:
+        user (UserCreate): The user data for creating a new account.
+        manager (UserManager): The user manager instance.
+
+    Returns:
+        JSONResponse: A JSON response containing the new user's ID.
     """
     retrieved_user = manager.get_user_by_username(username=user.username)
     if retrieved_user:
@@ -98,6 +113,13 @@ def signing_up_user(
 def get_current_user(request: Request, user: User = Depends(get_current_user)):
     """
     Retrieve information about the currently authenticated user.
+
+    Parameters:
+        request (Request): The request object.
+        user (User): The current authenticated user.
+
+    Returns:
+        dict: A dictionary containing the user's ID, username, and creation timestamp.
     """
     return {
         "user_id": user.user_id,
@@ -109,6 +131,12 @@ def get_current_user(request: Request, user: User = Depends(get_current_user)):
 def logout(response: Response):
     """
     Log out the current user by clearing the session cookie.
+
+    Parameters:
+        response (Response): The response object used to delete the session cookie.
+
+    Returns:
+        dict: A dictionary containing a success message.
     """
     response.delete_cookie(key="session")
     return {"message": "Logged out successfully"}
