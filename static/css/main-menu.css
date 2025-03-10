@@ -24,7 +24,7 @@
     text-decoration: none;
     background-color: #74b9ff;
     font-size: 16px;
-    color: white;
+    color: #333;
     padding: 10px 14px;
     border: 2px solid rgba(52, 152, 219, 0.8);
     border-radius: 20px;
@@ -35,9 +35,9 @@
 
 /* New Net button hover effect */
 .new-net-button:hover {
-    background-color: #27ae60;
+    background-color: #4a90e2;
     color: white;
-    border-color: rgba(39, 174, 96, 0.8);
+    border-color: rgba(52, 152, 219, 1);
     border-radius: 20px;
 }
 
@@ -81,7 +81,6 @@
 .menu-item, .new-net-button, .thread-item {
     display: block;
     text-decoration: none;
-    color: #34495e;
     font-weight: 500;
     padding: 10px 12px;
     transition: color 0.3s ease, background-color 0.3s ease;

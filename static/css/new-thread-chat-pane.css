@@ -34,8 +34,8 @@
     margin-top: 10px;
     padding: 10px 15px;
     font-size: 16px;
-    background-color: #4a90e2;
-    color: white;
+    background-color: #74b9ff;
+    color: #333;
     border: 1px solid #3a7bc8;
     border-radius: 15px;
     cursor: pointer;
@@ -46,4 +46,5 @@
 #send-button:hover {
     background-color: #3a7bc8;
     border-color: #4a90e2;
+    color: white;
 }

@@ -21,8 +21,8 @@
 /* Common styles for login and logout buttons */
 .login-button, .logout-button {
     text-decoration: none;
-    background-color: #4a90e2;
-    color: white;
+    background-color: #74b9ff;
+    color: #333;
     padding: 5px 10px;
     border-radius: 5px;
 }
@@ -35,4 +35,5 @@
 
 .login-button:hover, .logout-button:hover {
     background-color: #2980b9;
+    color: white;
 }
