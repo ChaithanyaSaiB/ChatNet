@@ -1,7 +1,7 @@
 /* Styles for the main chat area */
 .chat-pane {
     position: relative;
-    background-color: #f0f0f0;
+    background-color: #f5f7fa;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -22,7 +22,7 @@
     width: 100%;
     padding: 10px;
     border-radius: 15px;
-    border: 1px solid #bbb;
+    border: 1px solid #cbd5e0;
     min-height: 40px;
     max-height: 120px;
     resize: none;
@@ -34,9 +34,9 @@
     margin-top: 10px;
     padding: 10px 15px;
     font-size: 16px;
-    background-color: #27ae60;
+    background-color: #4a90e2;
     color: white;
-    border: 1px solid #1e8449;
+    border: 1px solid #3a7bc8;
     border-radius: 15px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -44,6 +44,6 @@
 
 /* Hover effect for send button */
 #send-button:hover {
-    background-color: #1e8449;
-    border-color: #27ae60;
+    background-color: #3a7bc8;
+    border-color: #4a90e2;
 }

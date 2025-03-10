@@ -72,7 +72,7 @@ class AuthenticationManager:
         if not token:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Missing authentication token"
+                detail="Session has ended. Please login again to continue"
             )
 
         payload = self.decode_token(token)

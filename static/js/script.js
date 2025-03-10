@@ -136,16 +136,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const sendButton = document.querySelector('#send-button');
 
     /**
-     * Event listener for the chat input to send a message on pressing Enter.
+     * Event listener for the chat input to send a message on pressing Enter and creating a new line when Enter + Shift are pressed.
      *
      * @param {Event} event - The keypress event.
      */
-    chatInput.addEventListener('keypress', function(event) {
+    chatInput.addEventListener('keydown', function (event) {
         if (event.key === 'Enter') {
-            event.preventDefault();
-            sendButton.click();
+            if (event.shiftKey) {
+                // Allow Shift + Enter to create a new line
+                const cursorPosition = chatInput.selectionStart;
+                chatInput.value =
+                    chatInput.value.slice(0, cursorPosition) +
+                    '\n' +
+                    chatInput.value.slice(cursorPosition);
+                event.preventDefault(); // Prevent default behavior of Enter
+            } else {
+                // Prevent default Enter behavior and trigger send button click
+                event.preventDefault();
+                sendButton.click();
+            }
         }
-    });
+    });    
 
     /**
      * Event listener for the logout button.
@@ -162,9 +173,14 @@ document.addEventListener('DOMContentLoaded', function() {
      * Adjusts the height of the user input field based on its content.
      */
     function adjustHeight() {
-        userInput.style.height = defaultHeight;
+        // Temporarily reset height to calculate scrollHeight correctly
+        userInput.style.height = "auto";
+        // Set height to either scrollHeight or maxHeight, whichever is smaller
         userInput.style.height = Math.min(userInput.scrollHeight, parseInt(maxHeight)) + "px";
     }
+
+    // Adjust height once on page load to account for any pre-filled content
+    adjustHeight();
 
     /**
      * Event listener for adjusting the height of the user input field.

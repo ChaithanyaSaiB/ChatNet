@@ -15,10 +15,13 @@
     border-bottom: 1px solid rgba(96, 93, 93, 0.2);
 }
 
+.username-display {
+    display: none;
+}
 /* Common styles for login and logout buttons */
 .login-button, .logout-button {
     text-decoration: none;
-    background-color: #3498db;
+    background-color: #4a90e2;
     color: white;
     padding: 5px 10px;
     border-radius: 5px;
@@ -28,4 +31,8 @@
 .logout-button {
     margin-left: 10px;
     display: none;
+}
+
+.login-button:hover, .logout-button:hover {
+    background-color: #2980b9;
 }

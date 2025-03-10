@@ -1,6 +1,6 @@
 /* Styles for the net pane container */
 .net-pane {
-    background-color: #bdc3c7;
+    background-color: #e5e8eb;
     overflow: auto;
     display: flex;
     justify-content: center;
@@ -20,4 +20,10 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
+}
+
+/* Center the canvas element */
+canvas {
+    display: block;
+    margin: auto;
 }

@@ -21,13 +21,13 @@
 
 .markdown-body h1 {
     font-size: 2em;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #cbd5e0;
     padding-bottom: 0.3em;
 }
 
 .markdown-body h2 {
     font-size: 1.6em;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #cbd5e0;
     padding-bottom: 0.3em;
 }
 
@@ -45,7 +45,7 @@
 
 .markdown-body h6 {
     font-size: 0.9em;
-    color: #777;
+    color: #555;
 }
 
 /* Paragraph spacing */
@@ -98,7 +98,7 @@
 
 /* Link styling with hover effect */
 .markdown-body a {
-    color: #0366d6;
+    color: #4a90e2;
     text-decoration: none;
 }
 
@@ -110,8 +110,8 @@
 .markdown-body blockquote {
     margin: 16px 0;
     padding: 0 15px;
-    color: #777;
-    border-left: 4px solid #ddd;
+    color: #555;
+    border-left: 4px solid #cbd5e0;
 }
 
 /* Inline code and code block styling */
@@ -130,7 +130,7 @@
     overflow: auto;
     font-size: 85%;
     line-height: 1.45;
-    background-color: #f6f8fa;
+    background-color: #f5f7fa;
     border-radius: 3px;
     font-family: monospace;
 }
@@ -155,12 +155,12 @@
 .markdown-body th {
     font-weight: bold;
     padding: 6px 13px;
-    border: 1px solid #ddd;
+    border: 1px solid #cbd5e0;
 }
 
 .markdown-body td {
     padding: 6px 13px;
-    border: 1px solid #ddd;
+    border: 1px solid #cbd5e0;
 }
 
 .markdown-body tr {
@@ -169,7 +169,7 @@
 }
 
 .markdown-body tr:nth-child(2n) {
-    background-color: #f8f8f8;
+    background-color: #f9f9f9;
 }
 
 /* Responsive image sizing */

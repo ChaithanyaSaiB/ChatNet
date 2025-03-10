@@ -65,12 +65,12 @@
 
 /* Styles for the checked state of the toggle switch */
 input:checked + .slider {
-    background-color: #2196F3;
+    background-color: #4a90e2;
 }
 
 /* Adds focus styles to the toggle switch */
 input:focus + .slider {
-    box-shadow: 0 0 1px #2196F3;
+    box-shadow: 0 0 1px #4a90e2;
 }
 
 /* Moves the toggle switch button when checked */
@@ -122,7 +122,7 @@ input:checked + .slider:before {
 .expand-button {
     display: inline-block;
     padding: 5px 10px;
-    background-color: #3498db;
+    background-color: #4a90e2;
     color: white;
     text-decoration: none;
     border-radius: 5px;
@@ -132,7 +132,7 @@ input:checked + .slider:before {
 /* Hover styles for collapse and expand buttons */
 .collapse-button:hover,
 .expand-button:hover {
-    background-color: #2980b9;
+    background-color: #3a7bc8;
 }
 
 /* Adds margin to the top of collapsed units */
@@ -159,12 +159,12 @@ input:checked + .slider:before {
 
 /* Styles the icon for included items */
 .included-icon {
-    color: green;
+    color: #49b877;
     margin-left: 5px;
 }
 
 /* Styles the icon for excluded items */
 .excluded-icon {
-    color: red;
+    color: #e74c3c;
     margin-left: 5px;
 }

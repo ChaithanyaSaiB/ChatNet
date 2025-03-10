@@ -1,7 +1,7 @@
 /* Container for the entire chat interface */
 .chat-pane {
     position: relative;
-    background-color: #f0f0f0;
+    background-color: #f5f7fa;
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -18,7 +18,7 @@
     border-radius: 10px;
     position: relative;
     max-height: calc(100% - 60px);
-    border: 1px solid rgba(96, 93, 93, 0.3);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     border-bottom: none;
 }
 
@@ -29,6 +29,6 @@
 
 /* Styling for the scrollbar thumb (the draggable part) */
 #chat-area::-webkit-scrollbar-thumb {
-    background: #b2bec3;
+    background: #cbd5e0;
     border-radius: 4px;
 }

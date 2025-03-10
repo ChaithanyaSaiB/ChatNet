@@ -110,9 +110,9 @@ export function drawNode(node, levelHeight, nodeSpacing, ctx, canvas) {
     });
 
     ctx.beginPath();
-    ctx.rect(node.x - node.width / 2, node.y - node.height / 2, node.width, node.height);
+    ctx.roundRect(node.x - node.width / 2, node.y - node.height / 2, node.width, node.height, node.width / 8);
     ctx.setLineDash([]);
-    ctx.fillStyle = node.selected ? (selection.indexOf(node) === 0 ? '#35445c' : '#FF6347') : '#BADA55';
+    ctx.fillStyle = node.selected ? (selection.indexOf(node) === 0 ? '#6495ed' : '#9bb7e8') : '#d6dde3';
     ctx.fill();
     ctx.stroke();
 
@@ -124,7 +124,7 @@ export function drawNode(node, levelHeight, nodeSpacing, ctx, canvas) {
     const x = node.x - node.width / 2 + 5;
     let y = node.y - node.height / 2 + 5;
 
-    const lines = wrapText(ctx, node.queryText, maxWidth);
+    const lines = wrapText(ctx, node.queryText, maxWidth - 4);
 
     for (let i = 0; i < lines.length; i++) {
         if (y + lineHeight > node.y + node.height / 2) {
@@ -142,8 +142,6 @@ export function drawNode(node, levelHeight, nodeSpacing, ctx, canvas) {
         ctx.fillText(lines[i], x, y);
         y += lineHeight;
     }
-
-    // canvas.style.cursor = (isMouseOverNode(node) ? 'pointer' : 'default');
 
     node.children.forEach(child => drawNode(child, levelHeight, nodeSpacing, ctx, canvas));
 }

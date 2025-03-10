@@ -7,7 +7,7 @@
 
 /* Styling for the query container */
 .query-container {
-    background-color: #e0f7fa;
+    background-color: #dbeeff;
     border-radius: 15px;
     padding: 15px;
     margin-bottom: 10px;
@@ -17,30 +17,22 @@
 }
 
 /* Margin for main elements in the chat area */
-.query, .sources, .response, .suggested-queries {
+.query, .sources, .response {
     margin-bottom: 20px;
-}
-
-/* Default styling for query title */
-#query-title {
-    font-size: 20px;
-    font-weight: bold;
-    color: #2c3e50;
 }
 
 /* Specific styling for query title within query container */
 .query-container .query #query-title {
     text-align: justify;
     font-size: 16px;
-    font-weight: bold;
-    color: #006064;
+    color: #333;
     line-height: 1.5;
     word-wrap: break-word;
 }
 
 /* Styling for the response container */
 .response-container {
-    background-color: #DCF8C6;
+    background-color: #e8f5e9;
     border-radius: 15px;
     padding: 15px;
     margin-bottom: 10px;
@@ -58,7 +50,7 @@
 .sources-title {
     font-size: 18px;
     font-weight: bold;
-    color: #16a085;
+    color: #4a90e2;
 }
 
 /* Styling for individual source items */
@@ -75,19 +67,19 @@
 }
 
 /* Styling for sources and suggested queries sections */
-.sources, .suggested-queries {
+.sources {
     margin-top: 10px;
     padding-left: 15px;
 }
 
 /* Common styling for sources and suggested queries titles */
-.sources-title, .suggested-queries-title {
+.sources-title {
     font-size: 14px;
     font-weight: bold;
 }
 
 /* Common styling for source and suggested query items */
-.source-item, .suggested-query-item {
+.source-item {
     font-size: 14px;
 }
 
@@ -102,5 +94,5 @@
 /* Specific styling for response text within response container */
 .response-container .response #response-text {
     font-size: 16px;
-    color: #000;
+    color: #333;
 }

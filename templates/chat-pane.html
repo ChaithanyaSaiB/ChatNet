@@ -96,7 +96,7 @@
                     <div class="query-container">
                         <!-- Container for the user's query -->
                         <div class="query">
-                            <h2 id="query-title">{{ conversation_unit["query"] }}</h2>
+                            <p id="query-title">{{ conversation_unit["query"] }}</p>
                             <div class="query_id" data-value="{{ conversation_unit['query_id'] }}"></div>
                             <div class="parent_query_id" data-value="{% if conversation_unit['parent_query_ids'] is not none %}{{ conversation_unit['parent_query_ids']|string }}{% else %}none{% endif %}"></div>
                         </div>
@@ -126,7 +126,7 @@
                 <!-- The last conversation unit in the group (always expanded) -->
                 <div class="query-container">
                     <div class="query">
-                        <h2 id="query-title">{{ last_conversation_unit["query"] }}</h2>
+                        <p id="query-title">{{ last_conversation_unit["query"] }}</p>
                         <div class="query_id" data-value="{{ last_conversation_unit['query_id'] }}"></div>
                         <div class="parent_query_id" data-value="{% if last_conversation_unit['parent_query_ids'] is not none %}{{ last_conversation_unit['parent_query_ids']|string }}{% else %}none{% endif %}"></div>
                     </div>
@@ -155,7 +155,7 @@
                 <!-- If there is only one group, displays all conversation units without collapsing -->
                 <div class="query-container">
                     <div class="query">
-                        <h2 id="query-title">{{ conversation_unit["query"] }}</h2>
+                        <p id="query-title">{{ conversation_unit["query"] }}</p>
                         <div class="query_id" data-value="{{ conversation_unit['query_id'] }}"></div>
                         <div class="parent_query_id" data-value="{% if conversation_unit['parent_query_ids'] is not none %}{{ conversation_unit['parent_query_ids']|string }}{% else %}none{% endif %}"></div>
                     </div>
