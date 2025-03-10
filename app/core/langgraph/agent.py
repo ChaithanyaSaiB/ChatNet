@@ -49,7 +49,7 @@ def call_model(state: State):
             status_code=status_code
         )
 
-    print("Call model's response:", response)
+    # print("Call model's response:", response)
     return {"messages": [response]}
 
 def create_agent():
