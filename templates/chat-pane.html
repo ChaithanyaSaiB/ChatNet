@@ -106,15 +106,15 @@
                         <div class="response">
                             <div id="response-text" class="markdown-body">{{ conversation_unit["response"] }}</div>
                         </div>
-                        <div class="sources">
-                            <!-- Container for the sources of information -->
-                            {% if conversation_unit["search_results"] != [] %}
-                            <h5 class="sources-title">Sources</h5>
-                            {% endif %}
-                            {% for source in conversation_unit["search_results"] %}
-                            <a href="{{ source }}" class="source-item">{{ source }}</a>
-                            {% endfor %}
-                        </div>
+                        {% if conversation_unit["search_results"] != [] %}
+                            <div class="sources">
+                                <!-- Container for the sources of information -->
+                                <h5 class="sources-title">Sources</h5>
+                                {% for source in conversation_unit["search_results"] %}
+                                <a href="{{ source }}" class="source-item">{{ source }}</a>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}
@@ -135,14 +135,14 @@
                     <div class="response">
                         <div id="response-text" class="markdown-body">{{ last_conversation_unit["response"] }}</div>
                     </div>
-                    <div class="sources">
-                        {% if last_conversation_unit["search_results"] != [] %}
+                    {% if last_conversation_unit["search_results"] != [] %}
+                        <div class="sources">
                             <h5 class="sources-title">Sources</h5>
-                        {% endif %}
-                        {% for source in last_conversation_unit["search_results"] %}
-                            <a href="{{ source }}" class="source-item">{{ source }}</a>
-                        {% endfor %}
-                    </div>
+                            {% for source in last_conversation_unit["search_results"] %}
+                                <a href="{{ source }}" class="source-item">{{ source }}</a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
             </div>
             {% endif %}
@@ -185,14 +185,14 @@
                     <div class="response">
                         <div id="response-text" class="markdown-body">{{ conversation_unit["response"] }}</div>
                     </div>
-                    <div class="sources">
-                        {% if conversation_unit["search_results"] != [] %}
+                    {% if conversation_unit["search_results"] != [] %}
+                        <div class="sources">
                             <h5 class="sources-title">Sources</h5>
-                        {% endif %}
-                        {% for source in conversation_unit["search_results"] %}
-                            <a href="{{ source }}" class="source-item">{{ source }}</a>
-                        {% endfor %}
-                    </div>
+                            {% for source in conversation_unit["search_results"] %}
+                                <a href="{{ source }}" class="source-item">{{ source }}</a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}

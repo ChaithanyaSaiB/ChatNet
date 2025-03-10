@@ -111,16 +111,18 @@ function normalReplyBuilder(userInput, queryIdsList, justQueryIds = null, lastQu
                 <div class="response">
                     <div id="response-text" class="markdown-body">${marked.parse(lastConversationUnit.response)}</div>
                 </div>
-                <div class="sources">
-                    ${lastConversationUnit.search_results && lastConversationUnit.search_results.length > 0 ? 
-                        `<h5 class="sources-title">Sources</h5>
-                        ${lastConversationUnit.search_results.map(source => 
-                            `<a href="${source}" class="source-item">${source}</a>`
-                        ).join('')}`
-                    : ''}
-                </div>
+                ${lastConversationUnit.search_results && lastConversationUnit.search_results.length > 0 ? 
+                    `
+                    <div class="sources">
+                    <h5 class="sources-title">Sources</h5>
+                    ${lastConversationUnit.search_results.map(source => 
+                        `<a href="${source}" class="source-item">${source}</a>`
+                    ).join('')}
+                    </div>`
+                : ''}
             </div>
         `;
+
         history.pushState(null, '', `/thread?thread_id=${threadId}&query_id=${lastConversationUnit["query_id"]}`);
         if (lastConversationUnit.parent_query_ids.length > 1) {
             window.addNode(lastConversationUnit.parent_query_ids[0], lastConversationUnit.query_id, true, lastConversationUnit.query, lastConversationUnit.response);

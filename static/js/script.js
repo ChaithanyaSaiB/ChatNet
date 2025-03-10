@@ -16,24 +16,25 @@ document.addEventListener('DOMContentLoaded', function() {
         const chatArea = document.getElementById('chat-area');
         const queries = document.querySelectorAll('.query');
         const targetQuery = queries[queries.length - 1];
-
+    
         if (!chatArea || !targetQuery) return;
-      
-        const chatAreaHeight = chatArea.clientHeight;        
+    
+        const chatAreaHeight = chatArea.clientHeight;
         const targetRect = targetQuery.getBoundingClientRect();
         const chatAreaRect = chatArea.getBoundingClientRect();
-        const relativeTop = targetRect.top - chatAreaRect.top;      
+        const relativeTop = targetRect.top - chatAreaRect.top;
         let newScrollTop = chatArea.scrollTop + relativeTop;
-      
-        const remainingSpace = chatAreaHeight - targetRect.height;
-        if (remainingSpace > 0) {
-          const extraSpace = document.createElement('div');
-          extraSpace.style.height = `${remainingSpace}px`;
-          chatArea.appendChild(extraSpace);
+    
+        // Adjust scroll position to keep the target query visible at the bottom
+        if (targetRect.height > chatAreaHeight) {
+            newScrollTop = targetArea.scrollHeight;
+    
+        } else if (newScrollTop + targetRect.height > chatArea.scrollHeight){
+            newScrollTop = chatArea.scrollHeight - chatAreaHeight;
         }
-      
+    
         chatArea.scrollTop = newScrollTop;
-    }
+    };    
 
     /**
      * Renders Markdown content in elements with the class 'markdown-body'.
