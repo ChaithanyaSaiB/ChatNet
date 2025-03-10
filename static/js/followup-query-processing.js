@@ -90,7 +90,7 @@ function normalReplyBuilder(userInput, queryIdsList, justQueryIds = null, lastQu
     fetch(window.buildDynamicURL(threadId, queryIdsList, false, justQueryIds), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query_text: { query: userInput } })
+        body: JSON.stringify({ query: userInput })
     })
     .then(response => {
         if (response.ok) {
