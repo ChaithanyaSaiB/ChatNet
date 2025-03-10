@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from typing import Type, TypeVar, List, Any, Optional
-from app.utils.api_error import APIError
-from app.utils.groq_api_exception import GroqAPIException
+from app.exceptions.api_exception import APIException
+from app.exceptions.groq_api_exception import GroqAPIException
 
 T = TypeVar('T')
 
@@ -14,7 +14,7 @@ class BaseService:
         try:
             instance = self.db.query(model).filter(model.id == id).first()
             if not instance:
-                raise APIError(f"{model.__name__} with id {id} not found", status_code=404)
+                raise APIException(f"{model.__name__} with id {id} not found", status_code=404)
             return instance
         except SQLAlchemyError as e:
             self.handle_error(e)
@@ -56,10 +56,10 @@ class BaseService:
 
     def handle_error(self, error: Exception):
         self.db.rollback()
-        if isinstance(error, APIError):
+        if isinstance(error, APIException):
             raise error
         elif isinstance(error, GroqAPIException):
             raise error
         else:
             print("error object is",error)
-            raise APIError(str(error), status_code=500)
+            raise APIException(str(error), status_code=500)

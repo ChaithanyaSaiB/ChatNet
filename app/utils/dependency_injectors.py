@@ -7,12 +7,15 @@ from app.services.conversation_manager import ConversationManager
 from app.services.authentication_manager import AuthenticationManager
 
 def get_conversation_manager(db: Session = Depends(get_db)) -> ConversationManager:
+    """Conversation manager dependency."""
     return ConversationManager(db)
 
 def get_thread_manager(db: Session = Depends(get_db)) -> ThreadManager:
+    """Thread manager dependency."""
     return ThreadManager(db)
 
 def get_user_manager(db: Session = Depends(get_db)) -> UserManager:
+    """User manager dependency."""
     return UserManager(db)
 
 def get_authentication_manager(db: Session = Depends(get_db)) -> AuthenticationManager:

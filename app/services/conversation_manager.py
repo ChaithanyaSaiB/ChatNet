@@ -6,7 +6,7 @@ from app.models.query import Query
 from app.models.query_relation import QueryRelation
 from app.models.search_result import SearchResult
 from app.services.base_service import BaseService
-from app.utils.langchain_utils import langgraph_agent
+from app.core.langgraph.agent import langgraph_agent
 from app.utils.message_conversion import get_langchain_messages
 from app.utils.url_extractor import extract_urls
 

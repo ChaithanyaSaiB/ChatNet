@@ -1,17 +1,12 @@
+import os
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
-from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, func
-from sqlalchemy.orm import sessionmaker, declarative_base, Session
-from app.api import auth, conversations, threads
-import os
 from contextlib import asynccontextmanager
-from fastapi.templating import Jinja2Templates
+from app.api import auth, conversations, threads
 from app.core.templates import templates
 from app.core.database import Base, engine
-from app.utils.api_error import APIError
-from app.utils.groq_api_exception import GroqAPIException
-from app.utils.langchain_utils import create_agent
+from app.exceptions.api_exception import APIException
+from app.exceptions.groq_api_exception import GroqAPIException
 from app.models.user import User
 from app.models.thread import Thread
 from app.models.search_result import SearchResult
@@ -68,8 +63,8 @@ async def groq_api_exception_handler(request: Request, exc: GroqAPIException):
         status_code=exc.status_code
     )
 
-@app.exception_handler(APIError)
-async def api_error_handler(request: Request, exc: APIError):
+@app.exception_handler(APIException)
+async def api_error_handler(request: Request, exc: APIException):
     return templates.TemplateResponse(
         "error.html",
         {

@@ -1,8 +1,7 @@
 from langgraph.graph import StateGraph, START, END
 from app.models.pydantic_models import State
-from app.core.llm_config import tool_node
-from app.core.llm_config import llm, tavily_search
-from app.utils.groq_api_exception import GroqAPIException
+from app.core.langgraph.llm_config import tool_node, llm, tavily_search
+from app.exceptions.groq_api_exception import GroqAPIException
 from langchain_core.messages import SystemMessage
 from typing import Literal
 

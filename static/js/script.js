@@ -56,8 +56,6 @@ document.addEventListener('DOMContentLoaded', function() {
     window.errorDisplayForChatPane = function(error) {
         if (error instanceof Response) 
         {
-            console.log("entered error display for chat pane");
-            console.log(error);
             error.text().then(errorHtml => {
                 let chatPane = document.querySelector('.chat-pane');
                 chatPane.innerHTML = errorHtml;

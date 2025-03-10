@@ -25,11 +25,7 @@ export function constructTree() {
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include'
         })
-        .then(response => {
-            const extracted_response = response.json();
-            console.log(extracted_response);
-            return extracted_response;
-        })
+        .then(response => response.json())
         .then(conversation => {
             // Build the tree and select the appropriate node
             window.buildTreeAndSelectNode(conversation, queryIdsList);

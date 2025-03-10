@@ -17,12 +17,6 @@ env = Environment(
     extensions=['jinja2.ext.loopcontrols']
 )
 
-def zip_to_list(zip_object):
-    return list(zip_object)
-
-# Add the custom filter to the environment
-env.filters['zip_to_list'] = zip_to_list
-
 # Create Jinja2Templates instance with the custom environment
 templates = Jinja2Templates(directory=templates_folder)
 templates.env = env
