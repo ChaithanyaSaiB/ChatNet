@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request, Query as fastapi_query
 from fastapi.responses import JSONResponse, RedirectResponse
 
-from app.core.authorization import access_check, get_current_user
+from app.core.authorization import get_current_user
 from app.models.pydantic_models import QueryText, UserId
 from app.models.user import User
 from app.services.thread_manager import ThreadManager

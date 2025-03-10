@@ -34,13 +34,6 @@ class UserId(BaseModel):
     """
     user_id: int  # Database-generated unique user identifier
 
-class ThreadId(BaseModel):
-    """
-    Conversation Thread Identifier:
-    Unique reference for specific conversation instances.
-    """
-    thread_id: int  # System-generated identifier for conversation threads
-
 class TokenData(BaseModel):
     """
     Authentication Token Payload:

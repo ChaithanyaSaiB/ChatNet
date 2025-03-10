@@ -17,15 +17,19 @@ export function constructTree() {
     const threadId = parseInt(threadIdElement.value, 10);
     const queryIdsString = document.querySelector('input[name="query_id"]').value;
     const queryIdsList = queryIdsString.split(', ').map(Number);
-
+    
     // Fetch the conversation history after a short delay
     setTimeout(() => {
-        fetch('/thread_conversation_history', {
+        fetch('/thread_conversation_history?thread_id='+threadId, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 'thread_id': threadId })
+            credentials: 'include'
         })
-        .then(response => response.json())
+        .then(response => {
+            const extracted_response = response.json();
+            console.log(extracted_response);
+            return extracted_response;
+        })
         .then(conversation => {
             // Build the tree and select the appropriate node
             window.buildTreeAndSelectNode(conversation, queryIdsList);

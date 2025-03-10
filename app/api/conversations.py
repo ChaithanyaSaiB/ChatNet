@@ -3,8 +3,8 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, Request, Query as fastapi_query, HTTPException
 from fastapi.responses import JSONResponse
 
-from app.core.authorization import access_check
-from app.models.pydantic_models import QueryText, ThreadId
+from app.core.authorization import verify_thread_access
+from app.models.pydantic_models import QueryText
 from app.models.user import User
 from app.services.conversation_manager import ConversationManager
 from app.utils.dependency_injectors import get_conversation_manager
@@ -15,9 +15,9 @@ router = APIRouter()
 @router.post("/thread_conversation_history")
 def thread_conversations(
     request: Request,
-    thread_id_model: ThreadId,
+    thread_id: int = fastapi_query(..., description="The ID of the thread"),
     conversation_manager: ConversationManager = Depends(get_conversation_manager),
-    user: User = Depends(access_check)
+    user: User = Depends(verify_thread_access)
 ):
     """
     Retrieve the full conversation history for a given thread ID.
@@ -31,7 +31,7 @@ def thread_conversations(
       - A list of all conversations within the specified thread.
     """
     try:
-        return conversation_manager.get_thread_conversation_history(thread_id=thread_id_model.thread_id)
+        return conversation_manager.get_thread_conversation_history(thread_id=thread_id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -43,7 +43,7 @@ def get_thread(
     query_id: Optional[List[int]] = fastapi_query(None, description="The ID of the query (optional)"),
     json_response_format: Optional[bool] = fastapi_query(None, description="True when response format is JSON (optional)"),
     conversation_manager: ConversationManager = Depends(get_conversation_manager),
-    user: User = Depends(access_check)
+    user: User = Depends(verify_thread_access)
 ):
     """
     Retrieve a thread's conversation history or specific queries.
@@ -115,7 +115,7 @@ async def post_thread(
     query_id: Optional[List[int]] = fastapi_query(None, description="The ID of the query (optional)"),
     just_query_id: Optional[List[int]] = fastapi_query([], description="The IDs of queries that need to be skipped for history (optional)"),
     conversation_manager: ConversationManager = Depends(get_conversation_manager),
-    user: User = Depends(access_check)
+    user: User = Depends(verify_thread_access)
 ):
     """
     Add a new message to a thread and update its conversation history.

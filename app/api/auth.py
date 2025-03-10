@@ -6,8 +6,8 @@ from app.core.templates import templates
 from app.models.user import User
 from app.models.pydantic_models import UserCreate
 from app.services.user_manager import UserManager
-from app.utils.dependency_injectors import get_user_manager
-from app.utils.password_security import create_access_token
+from app.services.authentication_manager import AuthenticationManager
+from app.utils.dependency_injectors import get_user_manager, get_authentication_manager
 from app.core.authorization import get_current_user
 from datetime import timedelta
 import os
@@ -30,8 +30,8 @@ def login(request: Request):
 @router.post("/token")
 def logging_in_user(
         response: Response,
-        form_data: OAuth2PasswordRequestForm = Depends(), 
-        manager: UserManager = Depends(get_user_manager)
+        form_data: OAuth2PasswordRequestForm = Depends(),
+        manager: AuthenticationManager = Depends(get_authentication_manager)
     ):
     """
     Authenticate the user and generate an access token.
@@ -46,7 +46,7 @@ def logging_in_user(
         )
     access_token_expire_minutes = int(os.environ['ACCESS_TOKEN_EXPIRE_MINUTES'])
     access_token_expires = timedelta(minutes=access_token_expire_minutes)
-    access_token = create_access_token(
+    access_token = manager.create_access_token(
         data={"username": user.username}, expires_delta=access_token_expires
     )
     content = {"message": "Login successful"}
