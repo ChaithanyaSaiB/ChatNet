@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
             checkbox.addEventListener('change', function() {
                 updateJustQueryIds();
                 const groupIndex = this.dataset.groupIndex;
-                const group = document.querySelector(`.conversation-group:nth-child(${parseInt(groupIndex) + 1})`);
+                const group = document.querySelector(`.conversation-group:nth-child(${parseInt(groupIndex) + 2})`);
                 const conversationUnits = group.querySelectorAll('.conversation-unit:not(.last)'); // Exclude last unit
                 const expandButton = group.querySelector('.expand-button');
                 const collapseButton = group.querySelector('.collapse-button');
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
             button.addEventListener('click', function (event) {
                 event.preventDefault();
                 const groupIndex = this.dataset.groupIndex;
-                const group = document.querySelector(`.conversation-group:nth-child(${parseInt(groupIndex) + 1})`);
+                const group = document.querySelector(`.conversation-group:nth-child(${parseInt(groupIndex) + 2})`);
                 const stickyControls = group.querySelector('.sticky-controls');
                 const collapsedUnits = group.querySelectorAll('.conversation-unit.collapsed');
 
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
             button.addEventListener('click', function (event) {
                 event.preventDefault();
                 const groupIndex = this.dataset.groupIndex;
-                const group = document.querySelector(`.conversation-group:nth-child(${parseInt(groupIndex) + 1})`);
+                const group = document.querySelector(`.conversation-group:nth-child(${parseInt(groupIndex) + 2})`);
 
                 // Get the expanded container and move units back to their original container
                 const expandedUnitsContainer = group.querySelector('.expanded-units');
