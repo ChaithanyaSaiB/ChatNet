@@ -61,5 +61,4 @@ class BaseService:
         elif isinstance(error, GroqAPIException):
             raise error
         else:
-            print("error object is",error)
             raise APIException(str(error), status_code=500)
