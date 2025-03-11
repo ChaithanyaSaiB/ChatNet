@@ -35,13 +35,18 @@ static_folder = os.path.join(project_root, "static")
 # Mount the static files
 app.mount("/static", StaticFiles(directory=static_folder), name="static")
 
+# Include routers
+app.include_router(auth.router) # Authentication routes
+app.include_router(threads.router) # Thread-related routes
+app.include_router(conversations.router) # Conversation routes
 
-app.include_router(auth.router)
-app.include_router(threads.router)
-app.include_router(conversations.router)
+# Exception handlers
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
+    """
+    Handles HTTPExceptions and returns a template response.
+    """
     return templates.TemplateResponse(
         "error.html",
         {
@@ -54,6 +59,9 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 
 @app.exception_handler(GroqAPIException)
 async def groq_api_exception_handler(request: Request, exc: GroqAPIException):
+    """
+    Handles GroqAPIErrors and returns a template response.
+    """
     return templates.TemplateResponse(
         "error.html",
         {
@@ -66,6 +74,9 @@ async def groq_api_exception_handler(request: Request, exc: GroqAPIException):
 
 @app.exception_handler(APIException)
 async def api_error_handler(request: Request, exc: APIException):
+    """
+    Handles APIExceptions and returns a template response.
+    """
     return templates.TemplateResponse(
         "error.html",
         {
