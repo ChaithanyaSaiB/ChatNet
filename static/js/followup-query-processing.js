@@ -131,6 +131,7 @@ function normalReplyBuilder(userInput, queryIdsList, justQueryIds = null, lastQu
             window.addNode(lastConversationUnit.parent_query_ids[0], lastConversationUnit.query_id, false, lastConversationUnit.query, lastConversationUnit.response);
         }
         window.scrollToQuery();
+        window.initializeChatInput();
     })
     .catch((error) => {
         window.errorDisplayForChatPane(error);

@@ -131,71 +131,92 @@ document.addEventListener('DOMContentLoaded', function() {
     renderMarkdown();
     scrollToQuery();
 
-    // --- Chat Input Elements ---
-    const chatInput = document.getElementById('user-input');
-    const sendButton = document.querySelector('#send-button');
-
     /**
-     * Event listener for the chat input to send a message on pressing Enter and creating a new line when Enter + Shift are pressed.
-     *
-     * @param {Event} event - The keypress event.
+     * Initializes the chat input functionality, including event listeners and height adjustment.
+     * This function can be called to reattach or reinitialize the chat input as needed.
      */
-    chatInput.addEventListener('keydown', function (event) {
-        if (event.key === 'Enter') {
-            if (event.shiftKey) {
-                // Allow Shift + Enter to create a new line
-                const cursorPosition = chatInput.selectionStart;
-                chatInput.value =
-                    chatInput.value.slice(0, cursorPosition) +
-                    '\n' +
-                    chatInput.value.slice(cursorPosition);
-                event.preventDefault(); // Prevent default behavior of Enter
-            } else {
-                // Prevent default Enter behavior and trigger send button click
-                event.preventDefault();
-                sendButton.click();
+    window.initializeChatInput = function() {        
+        const chatInput = document.getElementById('user-input');
+        const sendButton = document.querySelector('#send-button');
+        
+        if (!chatInput) {
+            console.error("Chat input element not found!");
+            return;
+        }
+        
+        if (!sendButton) {
+            console.error("Send button element not found!");
+            return;
+        }
+
+        const defaultHeight = "40px";
+        const maxHeight = "120px";
+
+        /**
+         * Adjusts the height of the user input field based on its content.
+         */
+        function adjustHeight() {
+            chatInput.style.height = "auto";
+            chatInput.style.height = Math.min(chatInput.scrollHeight, parseInt(maxHeight)) + "px";
+        }
+
+        /**
+         * Event listener for the chat input to handle Enter and Shift+Enter key presses.
+         * 
+         * @param {KeyboardEvent} event - The keydown event object.
+         */
+        function handleKeyDown(event) {
+            if (event.key === 'Enter') {
+                if (event.shiftKey) {
+                    const cursorPosition = chatInput.selectionStart;
+                    chatInput.value =
+                        chatInput.value.slice(0, cursorPosition) +
+                        '\n' +
+                        chatInput.value.slice(cursorPosition);
+                    event.preventDefault();
+                } else {
+                    event.preventDefault();
+                    sendButton.click();
+                }
             }
         }
-    });    
+
+        /**
+         * Event listener for resetting the height of the user input field on blur.
+         */
+        function handleBlur() {
+            chatInput.style.height = defaultHeight;
+        }
+
+        // Attach event listeners
+        chatInput.addEventListener('keydown', handleKeyDown);
+        chatInput.addEventListener("input", adjustHeight);
+        chatInput.addEventListener("focus", adjustHeight);
+        chatInput.addEventListener("blur", handleBlur);
+
+        /**
+         * Sets focus on the specified element only if it isn't currently focused.
+         *
+         * @param {HTMLElement} element - The element to focus.
+         */
+        function focusIfNotFocused(element) {
+            if (document.activeElement !== element) {
+                element.focus();
+            }
+        }
+
+        focusIfNotFocused(chatInput);
+
+        // Initial height adjustment
+        adjustHeight();
+    }
+
+    // Call the function to initialize
+    initializeChatInput();
 
     /**
      * Event listener for the logout button.
      * Calls the `logout` function when the button is clicked.
      */
     logoutButton.addEventListener('click', logout);
-
-    // --- User Input Adjustment ---
-    const userInput = document.querySelector("#user-input");
-    const defaultHeight = "40px";
-    const maxHeight = "120px";
-
-    /**
-     * Adjusts the height of the user input field based on its content.
-     */
-    function adjustHeight() {
-        // Temporarily reset height to calculate scrollHeight correctly
-        userInput.style.height = "auto";
-        // Set height to either scrollHeight or maxHeight, whichever is smaller
-        userInput.style.height = Math.min(userInput.scrollHeight, parseInt(maxHeight)) + "px";
-    }
-
-    // Adjust height once on page load to account for any pre-filled content
-    adjustHeight();
-
-    /**
-     * Event listener for adjusting the height of the user input field.
-     */
-    userInput.addEventListener("input", adjustHeight);
-
-    /**
-     * Event listener for adjusting the height of the user input field on focus.
-     */
-    userInput.addEventListener("focus", adjustHeight);
-
-    /**
-     * Event listener for resetting the height of the user input field on blur.
-     */
-    userInput.addEventListener("blur", function () {
-        userInput.style.height = defaultHeight;
-    });
 });

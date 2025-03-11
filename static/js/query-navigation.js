@@ -26,6 +26,7 @@ function selectedNodeChanged(queryId) {
         history.pushState(null, '', window.buildDynamicURL(data.thread_id, data.query_id, false));
         window.renderMarkdown();
         window.scrollToQuery();
+        window.initializeChatInput();
     })
     .catch(error => errorDisplayForChatPane(error));
 }
@@ -67,6 +68,7 @@ function multipleSelectionChanged(queryId) {
         window.collapseAllButtonEventListener();
         window.renderMarkdown();
         window.scrollToQuery();
+        window.initializeChatInput();
     })
     .catch(error => errorDisplayForChatPane(error));
 }
