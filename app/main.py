@@ -1,5 +1,6 @@
 import os
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from app.api import auth, conversations, threads
@@ -74,3 +75,8 @@ async def api_error_handler(request: Request, exc: APIException):
         },
         status_code=exc.status_code
     )
+
+# Serve the favicon.ico file from the static directory
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return FileResponse(static_folder + "/favicon.ico")
