@@ -46,7 +46,7 @@ function normalReplyBuilder(userInput, queryIdsList, justQueryIds = null, lastQu
     let htmlContent = `
         <div class="query-container">
             <div class="query">
-                <h2 id="query-title">${userInput}</h2>
+                <p id="query-title">${userInput}</p>
             </div>
     `;
     if (lastQueries != null) {
