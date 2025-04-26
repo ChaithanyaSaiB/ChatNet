@@ -1,4 +1,4 @@
-# ChatNet App Usage Guide
+# ChatNet
 
 ## 1. Introduction
 
@@ -178,6 +178,8 @@ If the app throws an unintended error, please take a screenshot and send it to t
 
 ### 12. Logout
 - Click logout and confirm.
+
+***For a more detailed app usage guide with screenshots, please refer to the `ChatNet_App_Usage_Guide.pdf` available in the main repository.***
 
 ---
 
